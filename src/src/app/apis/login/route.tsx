@@ -13,7 +13,6 @@ export async function POST(request: NextRequest) {
         body: data
     })
     const jsonResponse = await response.json();
-    console.log(jsonResponse);
 
     if (response.ok) {
         return NextResponse.json({"login": true}, {status: 200})
