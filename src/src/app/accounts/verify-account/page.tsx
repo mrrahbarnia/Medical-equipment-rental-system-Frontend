@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect, Fragment } from "react";
 import { FormEvent } from "react";
+import Link from "next/link";
 import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
@@ -66,6 +67,7 @@ const Page = () => {
                     </div>
                     <div className="flex flex-col mx-auto gap-3">
                         <button className="text-white hover:bg-gradient-to-tr from-orange-700 to-orange-300 transition mx-auto rounded-md py-2 px-4 font-[Yekan-Medium] disabled:pointer-events-none disabled:text-gray-600" disabled={isSubmitDisabled || isLoading} type="submit">{isLoading ? "صبر کنید" : "فعال سازی حساب کاربری"}</button>
+                        <Link href="/accounts/verify-account/resend" className="text-white font-[Yekan-Medium] hover:text-gray-300 text-center">دریافت کد تأییدیه جدید</Link>
                     </div>
                     {formError && <div dir="rtl" className="bg-red-600 leading-6 font-[Yekan-Medium] text-right p-3 rounded-md text-white text-xs">{formError}</div>}
                 </form>
