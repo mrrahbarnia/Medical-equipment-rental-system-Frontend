@@ -1,0 +1,1 @@
+export const EXTERNAL_BASE_ENDPOINTS = process.env.EXTERNAL_BASE_ENDPOINTS;
