@@ -91,7 +91,7 @@ const Page = () => {
                 <div className="relative flex flex-col gap-2 items-end">
                     <label className="text-white font-[Yekan-Medium]">رمز عبور</label>
                     {passwordValue.length > 0 && showPassword === "show" ? <AiFillEye size={20} className="text-gray-500 absolute bottom-2 right-2 cursor-pointer" onClick={showPasswordHandler} /> : passwordValue.length > 0 && showPassword === "hidden" ? <AiFillEyeInvisible size={20} className="text-gray-500 absolute bottom-2 right-2 cursor-pointer" onClick={showPasswordHandler} />: undefined}
-                    <input type={showPassword === "show" ? "password" : "text"} name="password" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setPasswordValue(event.target.value)} />
+                    <input type={showPassword === "show" ? "password" : "text"} name="password" placeholder="mM@123456" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setPasswordValue(event.target.value)} />
                 </div>
                 <div className="relative flex flex-col gap-2 items-end">
                     <label className="text-white font-[Yekan-Medium]">تکرار رمز عبور</label>
