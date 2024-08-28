@@ -11,7 +11,7 @@ export const Footer = () => {
                 
                 <div className="text-gray-400 space-x-6 flex items-center">
                     <div className="hover:text-gray-300 cursor-pointer font-[Yekan-Medium] text-xs hover:scale-105 transition">
-                        <Link href="#">تماس با ما</Link>
+                        <Link href="/ticket/">تماس با ما</Link>
                     </div>
                     <div className="hover:text-gray-300 cursor-pointer font-[Yekan-Medium] text-xs hover:scale-105 transition">
                         <Link href="#">قوانین و شرایط</Link>

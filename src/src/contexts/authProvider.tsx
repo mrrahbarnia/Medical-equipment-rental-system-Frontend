@@ -41,7 +41,7 @@ export const AuthProvider = (props: propsType) => {
     const logout = () => {
         setIsAuthenticated(false);
         localStorage.setItem(LOCAL_STORAGE_KEY, "0");
-        // return router.replace(LOGOUT_REDIRECT);
+        return router.replace(LOGOUT_REDIRECT);
     }
 
     const authenticatedPages = () => {
