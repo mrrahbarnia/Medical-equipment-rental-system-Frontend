@@ -46,7 +46,7 @@ export const Header = () => {
                         <MdOutlineManageAccounts size={20} />
                     </div>
                     <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm">
-                        <Link href="#" className="font-[Yekan-Bold]">تغییر رمز عبور</Link>
+                        <Link href="/accounts/change-password/" className="font-[Yekan-Bold]">تغییر رمز عبور</Link>
                         <RiLockPasswordLine size={20} />
                     </div>
                     <hr />

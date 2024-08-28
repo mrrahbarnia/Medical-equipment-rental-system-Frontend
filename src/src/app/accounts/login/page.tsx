@@ -22,7 +22,9 @@ const Page = () => {
     const auth = useAuth();
 
     useEffect(() => {
-        auth.notAuthenticatedPages();
+        if (message.loginAccountMessage !== "رمز عبور با موفقیت تغییر کرد,لطفا با رمز جدید وارد شوید.") {
+            auth.notAuthenticatedPages();
+        }
         if (message.loginAccountMessage) {
             contextMessageHandler(message.loginAccountMessage, setContextMessage);
         }
