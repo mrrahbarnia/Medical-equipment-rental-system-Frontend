@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/navigation";
 
 const LOCAL_STORAGE_KEY: string = "is-logged-in";
-const LOGOUT_REDIRECT: string = "/account/login/"
+const LOGOUT_REDIRECT: string = "/accounts/login/"
 
 type propsType = {
     children: React.ReactNode;

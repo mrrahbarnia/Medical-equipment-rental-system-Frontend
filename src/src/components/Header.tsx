@@ -10,10 +10,17 @@ import { RiAccountCircleFill } from "react-icons/ri";
 import { useAuth } from "@/contexts/authProvider";
 import Link from "next/link";
 
+const INTERNAL_LOGOUT_API: string = "/apis/logout/"
+
 export const Header = () => {
     const [showProfile, setShowProfile] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const auth = useAuth();
+
+    const logoutHandler = async() => {
+        auth.logout()
+        return await fetch(INTERNAL_LOGOUT_API);
+    }
 
     const showProfileHandler = () => {
         setShowProfile(!showProfile);
@@ -44,7 +51,7 @@ export const Header = () => {
                     </div>
                     <hr />
                     <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm">
-                        <Link href="#" className="font-[Yekan-Bold] -bottom-4">خروج</Link>
+                        <li onClick={logoutHandler} className="font-[Yekan-Bold] -bottom-4 list-none">خروج</li>
                         <FaSignOutAlt size={20} />
                     </div>
                 </div>}
