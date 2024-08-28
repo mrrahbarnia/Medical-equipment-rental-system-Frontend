@@ -6,6 +6,7 @@ import { useMessage } from "@/contexts/messageProvider";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_LOGIN_API: string = "/apis/login/"
 
@@ -18,6 +19,7 @@ const Page = () => {
     const [phoneNumberValue, setPhoneNumberValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
     const [showPassword, setShowPassword] = useState<"show" | "hidden">("show");
+    const auth = useAuth();
 
     useEffect(() => {
         if (message.loginAccountMessage) {
@@ -37,6 +39,7 @@ const Page = () => {
         })
 
         if (response.ok) {
+            auth.login();
             return router.replace("/");
         } else {
             const responseJson = await response.json();
