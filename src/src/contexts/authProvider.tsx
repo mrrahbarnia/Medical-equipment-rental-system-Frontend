@@ -12,7 +12,9 @@ type propsType = {
 type createContextType = {
     isAuthenticated: boolean,
     login: () => void,
-    logout: () => void
+    logout: () => void,
+    authenticatedPages: () => void,
+    notAuthenticatedPages: () => void
 }
 
 const authContext = createContext<createContextType>({} as createContextType)
@@ -42,9 +44,21 @@ export const AuthProvider = (props: propsType) => {
         return router.replace(LOGOUT_REDIRECT);
     }
 
+    const authenticatedPages = () => {
+
+    };
+
+    const notAuthenticatedPages = () => {
+        if (isAuthenticated) {
+            return router.back()
+        }
+    };
+
     return <authContext.Provider value={
         {
-            isAuthenticated, login, logout
+            isAuthenticated,
+            login, logout,
+            authenticatedPages, notAuthenticatedPages
         }
     }>
         {props.children}

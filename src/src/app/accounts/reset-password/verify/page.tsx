@@ -7,6 +7,7 @@ import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
 import Link from "next/link";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_RESET_PASSWORD_VERIFY_API: string = "/apis/reset-password/verify/"
 
@@ -18,12 +19,14 @@ const Page = () => {
     const router = useRouter();
     const [showPassword, setShowPassword] = useState<"show" | "hidden">("show");
     const [contextMessage, setContextMessage] = useState<string>("")
+    const auth = useAuth();
 
     useEffect(() => {
+        auth.notAuthenticatedPages();
         if (message.resetPasswordVerifyMessage) {
             contextMessageHandler(message.resetPasswordVerifyMessage, setContextMessage)
         }
-    }, [message])
+    }, [message, auth])
 
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {

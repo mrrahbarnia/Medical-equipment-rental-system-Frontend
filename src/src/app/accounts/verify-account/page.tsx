@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_VERIFY_ACCOUNT: string = "/apis/verify-account/"
 
@@ -15,12 +16,14 @@ const Page = () => {
     const router = useRouter();
     const [verificationCode, setVerificationCode] = useState("");
     const [contextMessage, setContextMessage] = useState<string>("")
+    const auth = useAuth();
 
     useEffect(() => {
+        auth.notAuthenticatedPages();
         if (message.verifyAccountMessage) {
             contextMessageHandler(message.verifyAccountMessage, setContextMessage)
         }
-    }, [message])
+    }, [message, auth])
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);

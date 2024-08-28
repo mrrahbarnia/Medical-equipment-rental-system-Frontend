@@ -1,9 +1,10 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler } from "@/utils/messageUtils";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_RESEND_VERIFICATION_CODE: string = "/apis/verify-account/resend"
 
@@ -13,6 +14,11 @@ const Page = () => {
     const [formError, setFormError] = useState("");
     const router = useRouter();
     const [phoneNumber, setPhoneNumber] = useState("");
+    const auth = useAuth();
+
+    useEffect(() => {
+        auth.notAuthenticatedPages();
+    }, [auth])
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);

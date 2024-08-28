@@ -1,12 +1,13 @@
 "use client"
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMessage } from "@/contexts/messageProvider";
 import { errorHandler } from "@/utils/messageUtils";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_REGISTER_API: string = "/apis/register/";
 
@@ -20,7 +21,11 @@ const Page = () => {
     const [confirmPasswordValue, setConfirmPasswordValue] = useState("");
     const [showPassword, setShowPassword] = useState<"show" | "hidden">("show");
     const [showConfirmPassword, setShowConfirmPassword] = useState<"show" | "hidden">("show");
+    const auth = useAuth();
 
+    useEffect(() => {
+        auth.notAuthenticatedPages();
+    }, [auth])
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);

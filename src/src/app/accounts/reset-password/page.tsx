@@ -1,9 +1,10 @@
 "use client"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import { errorHandler } from "@/utils/messageUtils";
 import { useRouter } from "next/navigation";
 import { useMessage } from "@/contexts/messageProvider";
+import { useAuth } from "@/contexts/authProvider";
 
 const INTERNAL_RESET_PASSWORD: string = "/apis/reset-password/";
 
@@ -13,7 +14,11 @@ const Page = () => {
     const [formError, setFormError] = useState("");
     const router = useRouter();
     const message = useMessage();
+    const auth = useAuth();
 
+    useEffect(() => {
+        auth.notAuthenticatedPages();
+    }, [auth])
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);

@@ -22,10 +22,11 @@ const Page = () => {
     const auth = useAuth();
 
     useEffect(() => {
+        auth.notAuthenticatedPages();
         if (message.loginAccountMessage) {
             contextMessageHandler(message.loginAccountMessage, setContextMessage);
         }
-    }, [message])
+    }, [message, auth])
 
     const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);
