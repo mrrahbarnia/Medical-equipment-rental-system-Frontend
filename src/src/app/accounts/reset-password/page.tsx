@@ -31,10 +31,9 @@ const Page = () => {
         })
 
         if (response.ok) {
-            return router.replace("/")
-            // setIsLoading(false);
-            // message.setResetPasswordVerifyMessage(() => "رمز عبور پیامک شده را وارد کنید.")
-            // return router.replace("/accounts/reset-password/verify/")
+            setIsLoading(false);
+            message.setResetPasswordVerifyMessage(() => "رمز عبور پیامک شده را وارد کنید.")
+            return router.replace("/accounts/reset-password/verify/")
         }
         if (!response.ok) {
             setIsLoading(false);
