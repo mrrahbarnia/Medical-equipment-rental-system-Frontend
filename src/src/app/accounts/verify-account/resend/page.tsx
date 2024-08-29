@@ -1,12 +1,14 @@
 "use client"
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { FormEvent } from "react";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler } from "@/utils/messageUtils";
 import { useAuth } from "@/contexts/authProvider";
 
-const INTERNAL_RESEND_VERIFICATION_CODE: string = "/apis/verify-account/resend"
+const EXTERNAL_RESEND_VERIFICATION_CODE: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/resend/verification-code/`;
 
 const Page = () => {
     const message = useMessage();
@@ -25,27 +27,23 @@ const Page = () => {
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;
 
-        const response = await fetch(INTERNAL_RESEND_VERIFICATION_CODE, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_RESEND_VERIFICATION_CODE, {
                 phoneNumber: eventForm.phoneNumber.value
-            })
-        })
-        
-        if (response.ok) {
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(() => {
             setIsLoading(false);
             message.setVerifyAccountMessage(() => "کد تأییدیه جدید ارسال شد,لطفا حساب کاربری خود را فعال کنید.")
             return router.replace("/accounts/verify-account");
-        }
-        if (!response.ok) {
+        }).catch(() => {
             setIsLoading(false);
             errorHandler("حساب کاربری فعالی با شماره موبایل وارد شده یافت نشد.", setFormError);
             setPhoneNumber("");
             return;
-        }
+        })
     }
 
     const isSubmitDisabled = phoneNumber.length !== 11;

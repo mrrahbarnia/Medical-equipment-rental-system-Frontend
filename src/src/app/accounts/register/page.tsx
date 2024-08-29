@@ -1,6 +1,8 @@
 "use client"
+import axios from "axios";
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import Link from "next/link";
@@ -9,7 +11,7 @@ import { useMessage } from "@/contexts/messageProvider";
 import { errorHandler } from "@/utils/messageUtils";
 import { useAuth } from "@/contexts/authProvider";
 
-const INTERNAL_REGISTER_API: string = "/apis/register/";
+const EXTERNAL_REGISTER_API: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/register/`;
 
 const Page = () => {
     const message = useMessage();
@@ -27,7 +29,7 @@ const Page = () => {
         auth.notAuthenticatedPages();
     }, [auth])
 
-    const formSubmitHandler = async(event: FormEvent<HTMLFormElement>) => {
+    const formSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
         setIsLoading(true);
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;        
@@ -37,35 +39,32 @@ const Page = () => {
             return setIsLoading(false);        
         }
 
-        const response = await fetch(INTERNAL_REGISTER_API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_REGISTER_API,{
                 phoneNumber: eventForm.phoneNumber.value,
                 password: eventForm.password.value,
                 confirmPassword: eventForm.confirmPassword.value
-            })
+            }, {
+                headers:{
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(() => {
+                setIsLoading(false);
+                message.setVerifyAccountMessage(() => "با موفقیت ثبت نام شدید,لطفا حساب کاربری خود را فعال کنید");
+                return router.replace("/accounts/verify-account");
+            }   
+        ).catch((error) => {
+            if (error.response?.data && error.response.data.detail === "Phone number already exists" ) {
+                errorHandler("با شماره موبایل وارد شده قبلا ثبت نام شده است.", setFormError)
+                setIsLoading(false);
+                return;
+            }
+            if (error.response?.data && error.response.data.detail[0]?.msg.includes("Password must contain at least 8 chars")) {
+                errorHandler("طول رمز عبور باید حداقل هشت کاراکتر,یک حرف انگلیسی کوچک,یک حرف انگلیسی بزرگ,یک عدد و یک کاراکتر خاص(@,&,$,..)باشد.", setFormError)
+                setIsLoading(false);
+                return;
+            }
         })
-        const jsonResponse = await response.json();
-        console.log(jsonResponse);
-
-        if (jsonResponse?.detail && jsonResponse.detail === "Phone number already exists") {
-            errorHandler("با شماره موبایل وارد شده قبلا ثبت نام شده است.", setFormError)
-            setIsLoading(false);
-            return;
-        }
-        if (jsonResponse?.detail && jsonResponse.detail[0]?.msg.includes("Password must contain at least 8 chars")) {
-            errorHandler("طول رمز عبور باید حداقل هشت کاراکتر,یک حرف انگلیسی کوچک,یک حرف انگلیسی بزرگ,یک عدد و یک کاراکتر خاص(@,&,$,..)باشد.", setFormError)
-            setIsLoading(false);
-            return;
-        }
-        if (response.ok) {
-            setIsLoading(false);
-            message.setVerifyAccountMessage(() => "با موفقیت ثبت نام شدید,لطفا حساب کاربری خود را فعال کنید");
-            return router.replace("/accounts/verify-account");
-        }
     }
 
     const showPasswordHandler = () => {

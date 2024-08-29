@@ -1,15 +1,17 @@
 "use client"
+import axios from "axios";
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { useState, useEffect, Fragment } from "react";
 import { FormEvent } from "react";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { useMessage } from "@/contexts/messageProvider";
 import { useRouter } from "next/navigation";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
 import Link from "next/link";
 import { useAuth } from "@/contexts/authProvider";
 
-const INTERNAL_RESET_PASSWORD_VERIFY_API: string = "/apis/reset-password/verify/"
+const EXTERNAL_RESET_PASSWORD_VERIFY_API: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/reset-password/verify/`
 
 const Page = () => {
     const message = useMessage();
@@ -24,7 +26,8 @@ const Page = () => {
     useEffect(() => {
         auth.notAuthenticatedPages();
         if (message.resetPasswordVerifyMessage) {
-            contextMessageHandler(message.resetPasswordVerifyMessage, setContextMessage)
+            contextMessageHandler(message.resetPasswordVerifyMessage, setContextMessage);
+            message.setResetPasswordVerifyMessage("");
         }
     }, [message, auth])
 
@@ -34,27 +37,24 @@ const Page = () => {
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;
 
-        const response = await fetch(INTERNAL_RESET_PASSWORD_VERIFY_API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_RESET_PASSWORD_VERIFY_API, {
                 randomPassword: eventForm.randomPassword.value
-            })
-        })
-
-        if (response.ok) {
-            setIsLoading(false);
-            message.setLoginAccountMessage(() => "رمز عبور با موفقیت تغییر کرد,بعد از ورود میتوانید رمز عبور دلخواه را انتخاب کنید")
-            return router.replace("/accounts/login/");
-        }
-        if (!response.ok) {
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(() => {
+                setIsLoading(false);
+                message.setLoginAccountMessage(() => "رمز عبور با موفقیت تغییر کرد,بعد از ورود میتوانید رمز عبور دلخواه را انتخاب کنید")
+                return router.replace("/accounts/login/");
+            }
+        ).catch(() => {
             setIsLoading(false);
             errorHandler("رمز عبور وارد شده نامعتبر است,لطفا رمز عبور دیگری درخواست کنید.", setFormError);
             setPasswordValue("");
             return;
-        }
+        })
     }
 
     const showPasswordHandler = () => {

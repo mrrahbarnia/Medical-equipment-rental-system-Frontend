@@ -1,4 +1,5 @@
 "use client"
+import axios from "axios";
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { useState, useEffect, Fragment, FormEvent } from "react";
@@ -27,6 +28,7 @@ const Page = () => {
         }
         if (message.loginAccountMessage) {
             contextMessageHandler(message.loginAccountMessage, setContextMessage);
+            // message.setLoginAccountMessage("");
         }
     }, [message, auth])
 
@@ -36,22 +38,16 @@ const Page = () => {
         const eventForm = event.target as HTMLFormElement;
         const formData = new FormData(eventForm)
 
-        const response = await fetch(INTERNAL_LOGIN_API, {
-            method: "POST",
-            body: formData
-        })
-
-        if (response.ok) {
+        axios.post(
+            INTERNAL_LOGIN_API, formData
+        ).then(() => {
             auth.login();
-            return router.replace("/");
-        } else {
-            const responseJson = await response.json();
-            if (responseJson.detail && responseJson.detail === 'There is no active account with the provided info') {
-                setIsLoading(false);
-                errorHandler("حساب کاربری فعالی با مشخصات داده شده یافت نشد.", setFormError)
-                return;
-            }
-        }
+            return router.replace("/")
+        }).catch(() => {
+            setIsLoading(false);
+            errorHandler("حساب کاربری فعالی با مشخصات داده شده یافت نشد.", setFormError)
+            return;
+        })
     }
 
     const showPasswordHandler = () => {

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/navigation";
 
 const LOCAL_STORAGE_KEY: string = "is-logged-in";
-const LOGOUT_REDIRECT: string = "/accounts/login/"
+const LOGOUT_REDIRECT: string = "/"
 
 type propsType = {
     children: React.ReactNode;
@@ -34,16 +34,15 @@ export const AuthProvider = (props: propsType) => {
 
     const login = () => {
         setIsAuthenticated(true);
-        localStorage.setItem(LOCAL_STORAGE_KEY, "1");
-        return router.replace("/");
+        return localStorage.setItem(LOCAL_STORAGE_KEY, "1");
     }
 
     const logout = () => {
         setIsAuthenticated(false);
-        localStorage.setItem(LOCAL_STORAGE_KEY, "0");
-        return router.replace(LOGOUT_REDIRECT);
+        return localStorage.setItem(LOCAL_STORAGE_KEY, "0");
+        
     }
-
+    // return router.replace(LOGOUT_REDIRECT);
     const authenticatedPages = () => {
         if (!isAuthenticated) {
             return router.back();

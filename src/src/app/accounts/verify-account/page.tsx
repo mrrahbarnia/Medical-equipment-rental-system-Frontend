@@ -1,13 +1,15 @@
 "use client"
+import axios from "axios";
 import { useState, useEffect, Fragment } from "react";
 import { FormEvent } from "react";
 import Link from "next/link";
 import { useMessage } from "@/contexts/messageProvider";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { useRouter } from "next/navigation";
 import { errorHandler, contextMessageHandler } from "@/utils/messageUtils";
 import { useAuth } from "@/contexts/authProvider";
 
-const INTERNAL_VERIFY_ACCOUNT: string = "/apis/verify-account/"
+const EXTERNAL_VERIFY_ACCOUNT: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/verify-account/`
 
 const Page = () => {
     const message = useMessage();
@@ -21,7 +23,8 @@ const Page = () => {
     useEffect(() => {
         auth.notAuthenticatedPages();
         if (message.verifyAccountMessage) {
-            contextMessageHandler(message.verifyAccountMessage, setContextMessage)
+            contextMessageHandler(message.verifyAccountMessage, setContextMessage);
+            message.setVerifyAccountMessage("");
         }
     }, [message, auth])
 
@@ -30,27 +33,24 @@ const Page = () => {
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;
 
-        const response = await fetch(INTERNAL_VERIFY_ACCOUNT, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_VERIFY_ACCOUNT, {
                 verificationCode: eventForm.verificationCode.value
-            })
-        })
-
-        if (response.ok) {
-            setIsLoading(false);
-            message.setLoginAccountMessage(() => "حساب کاربری شما با موفقیت فعال شد,لطفا وارد شوید.")
-            return router.replace("/accounts/login");
-        }
-        if (!response.ok) {
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(() => {
+                setIsLoading(false);
+                message.setLoginAccountMessage(() => "حساب کاربری شما با موفقیت فعال شد,لطفا وارد شوید.")
+                return router.replace("/accounts/login");
+            }
+        ).catch(() => {
             setIsLoading(false);
             errorHandler("کد تأییدیه معتبر نیست.", setFormError);
             setVerificationCode("");
             return;
-        }
+        })
     }
 
 

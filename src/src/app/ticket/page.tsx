@@ -1,9 +1,11 @@
 "use client"
+import axios from "axios";
 import { useState } from "react";
 import { FormEvent } from "react";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { errorHandler } from "@/utils/messageUtils";
 
-const INTERNAL_SEND_TICKET_API: string = "/apis/ticket/";
+const EXTERNAL_SEND_TICKET_API: string = `${EXTERNAL_BASE_ENDPOINTS}/tickets/create-ticket/`;
 
 const Page = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -18,25 +20,25 @@ const Page = () => {
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;        
 
-        const response = await fetch(INTERNAL_SEND_TICKET_API, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_SEND_TICKET_API, {
                 email: eventForm.email.value,
                 name: eventForm.userName.value,
                 message: eventForm.message.value
-            })
-        })
-        
-        if (response.ok) {
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        ).then(() => {
             setIsLoading(false);
+            setName(""),
+            setEmail("");
+            setMessage("");
             return errorHandler("نظر شما با موفقیت ارسال شد,در صورت لزوم با شما ارتباط برقرار خواهیم کرد.", setFeedBack)
-        } else {
+        }).catch(() => {
             setIsLoading(false);
             return errorHandler("دوباره تلاش کنید.", setFormError);
-        }
+        })
     }
 
     const isSubmitDisabled = email.length === 0 || name.length === 0 || message.length === 0
@@ -46,15 +48,15 @@ const Page = () => {
                 <h1 className="text-white font-[Yekan-Bold] text-lg mx-auto">فرم ارسال نظر</h1>
                 <div className="flex flex-col gap-2 items-end">
                     <label className="text-white font-[Yekan-Medium]">ایمیل</label>
-                    <input type="email" name="email" placeholder="example@gmail.com" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setEmail(event.target.value)}/>
+                    <input type="email" name="email" placeholder="example@gmail.com" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setEmail(event.target.value)} value={email}/>
                 </div>
                 <div className="relative flex flex-col gap-2 items-end">
                     <label className="text-white font-[Yekan-Medium]">نام</label>
-                    <input dir="rtl" type="text" name="userName" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setName(event.target.value)} />
+                    <input dir="rtl" type="text" name="userName" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setName(event.target.value)} value={name}/>
                 </div>
                 <div className="relative flex flex-col gap-2 items-end">
                     <label className="text-white font-[Yekan-Medium]">پیام</label>
-                    <textarea dir="rtl" name="message" rows={5} className="resize-none rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setMessage(event.target.value)} />
+                    <textarea dir="rtl" name="message" rows={5} className="resize-none rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setMessage(event.target.value)} value={message}/>
                 </div>
                 <div className="flex flex-col mx-auto gap-3">
                     <button className="text-white hover:bg-gradient-to-tr from-orange-700 to-orange-300 w-24 transition mx-auto rounded-md py-2 font-[Yekan-Medium] disabled:pointer-events-none disabled:text-gray-600" disabled={isSubmitDisabled || isLoading} type="submit">{isLoading ? "صبر کنید" : "ارسال نظر"}</button>

@@ -1,27 +1,33 @@
 "use server"
-
 import { NextRequest, NextResponse } from "next/server"
 import { changePasswordData } from "@/types/apis/changePassword";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
-import { deleteToken } from "@/utils/authUtils";
-import loginRequiredProxy from "../proxy";
+import { deleteToken, getToken } from "@/utils/authUtils";
 
 const EXTERNAL_CHANGE_PASSWORD_API: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/change-password/`;
 
-export async function PUT(request: NextRequest) {
+export const PUT = async (request: NextRequest) => {
     const requestedData: changePasswordData = await request.json();
-    const {data, status} = await loginRequiredProxy.putJson(
-        EXTERNAL_CHANGE_PASSWORD_API,
-        JSON.stringify(
-            {
-                oldPassword: requestedData.oldPassword,
-                newPassword: requestedData.newPassword,
-                confirmPassword: requestedData.confirmPassword
-            }
-        )
-    )
-    if (status==200) {
+
+    const authToken = getToken();
+    const response = await fetch(EXTERNAL_CHANGE_PASSWORD_API, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${authToken}`
+        },
+        body: JSON.stringify({
+            oldPassword: requestedData.oldPassword,
+            newPassword: requestedData.newPassword,
+            confirmPassword: requestedData.confirmPassword
+        })
+    })
+
+    if (response.ok) {
         deleteToken();
+        return NextResponse.json({"changed": true}, {status: 200})
+    } else {
+        const responseJson = await response.json()
+        return NextResponse.json(responseJson, {status: response.status})
     }
-    return NextResponse.json(data, {status: status})
 }

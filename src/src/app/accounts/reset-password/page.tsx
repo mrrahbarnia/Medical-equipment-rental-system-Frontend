@@ -1,12 +1,14 @@
 "use client"
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { FormEvent } from "react";
 import { errorHandler } from "@/utils/messageUtils";
+import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { useRouter } from "next/navigation";
 import { useMessage } from "@/contexts/messageProvider";
 import { useAuth } from "@/contexts/authProvider";
 
-const INTERNAL_RESET_PASSWORD: string = "/apis/reset-password/";
+const EXTERNAL_RESET_PASSWORD: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/reset-password/`;
 
 const Page = () => {
     const [phoneNumberValue, setPhoneNumberValue] = useState("");
@@ -25,27 +27,24 @@ const Page = () => {
         event.preventDefault();
         const eventForm = event.target as HTMLFormElement;
 
-        const response = await fetch(INTERNAL_RESET_PASSWORD, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.post(EXTERNAL_RESET_PASSWORD, {
                 phoneNumber: eventForm.phoneNumber.value
-            })
-        })
-
-        if (response.ok) {
-            setIsLoading(false);
-            message.setResetPasswordVerifyMessage(() => "رمز عبور پیامک شده را وارد کنید.")
-            return router.replace("/accounts/reset-password/verify/")
-        }
-        if (!response.ok) {
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            }
+        ).then(() => {
+                setIsLoading(false);
+                message.setResetPasswordVerifyMessage(() => "رمز عبور پیامک شده را وارد کنید.")
+                return router.replace("/accounts/reset-password/verify/")
+            }
+        ).catch(() => {
             setIsLoading(false);
             errorHandler("حساب کاربری فعالی با شماره موبایل وارد شده یافت نشد.", setFormError)
             setPhoneNumberValue("");
             return;
-        }
+        })
     }
 
 

@@ -1,4 +1,5 @@
 "use client"
+import axios from "axios";
 import { AiFillEye } from "react-icons/ai";
 import { AiFillEyeInvisible } from "react-icons/ai";
 import { useState, useEffect } from "react";
@@ -37,35 +38,36 @@ const Page = () => {
             return setIsLoading(false);        
         }
 
-        const response = await fetch(INTERNAL_CHANGE_PASSWORD_API, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        axios.put(INTERNAL_CHANGE_PASSWORD_API, {
                 oldPassword: eventForm.oldPassword.value,
                 newPassword: eventForm.newPassword.value,
                 confirmPassword: eventForm.confirmPassword.value
+            }, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                }
+            }).then(() => {
+                message.setLoginAccountMessage(() => "رمز عبور با موفقیت تغییر کرد,لطفا با رمز جدید وارد شوید.")
+                return router.replace("/accounts/login/")
+            }).catch((error) => {
+                setIsLoading(false);
+                if (error.response && error.response.data?.detail === "Old password is wrong") {
+                    errorHandler("رمز عبور قبلی وارد شده اشتباه است.", setFormError)
+                    setIsLoading(false);
+                    return;
+                }
+                if (error.status && error.status === 422) {
+                    errorHandler("طول رمز عبور باید حداقل هشت کاراکتر,یک حرف انگلیسی کوچک,یک حرف انگلیسی بزرگ,یک عدد و یک کاراکتر خاص(@,&,$,..)باشد.", setFormError)
+                    setIsLoading(false);
+                    return;
+                }
+                if (error.status && error.status === 401) {
+                    message.setLoginAccountMessage(() => "برای مشاهده این مسیر ابتدا وارد حساب کاربری خود شوید.")
+                    auth.logout();
+                    return router.replace("/accounts/login/");
+                }
             })
-        })
-        const responseJson = await response.json()
-
-        if (response.status === 401) {
-            setIsLoading(false);
-            return router.replace("/accounts/login/")
-        }   
-        
-        if (responseJson?.detail === 'Old password is wrong') {
-            errorHandler("رمز عبور قبلی وارد شده اشتباه است.", setFormError)
-            setIsLoading(false);
-            return;
-        }
-
-        if (response.ok) {
-            setIsLoading(false);
-            message.setLoginAccountMessage(() => "رمز عبور با موفقیت تغییر کرد,لطفا با رمز جدید وارد شوید.")
-            return router.replace("/accounts/login/")
-        }
     }
 
     const showOldPasswordHandler = () => {

@@ -64,7 +64,7 @@ export const Header = () => {
                         <RiAccountCircleFill size={25} className="cursor-pointer" />
                     </div>}
                     <Link href="/" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">خانه</Link>
-                    <Link href="#" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">کودک</Link>
+                    <Link href="/advertisement" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">آگهی ها</Link>
                     <Link href="#" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">استوری لاین</Link>
                     <Link href="#" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">جدیدترین ها</Link>
                 </div>}
@@ -79,7 +79,7 @@ export const Header = () => {
             </div>}
             <Link href="#" className="text-white font-[Yekan-Medium] text-sm hover:text-slate-400">جدیدترین ها</Link>
             <Link href="#" className="text-white font-[Yekan-Medium] text-sm hover:text-slate-400">استوری لاین</Link>
-            <Link href="#" className="text-white font-[Yekan-Medium] text-sm hover:text-slate-400">کودک</Link>
+            <Link href="/advertisement" className="text-white font-[Yekan-Medium] text-sm hover:text-slate-400">آگهی ها</Link>
             <Link href="/" className="text-white font-[Yekan-Medium] text-sm hover:text-slate-400">خانه</Link>
             
         </div>
