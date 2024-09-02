@@ -61,16 +61,16 @@ const Page = () => {
                 <p dir="rtl" className="animate-fadeIn text-white pr-6 py-2 text-right bg-gradient-to-l from-green-950 via-green-600 to-green-400 font-[Yekan-Medium] text-sm">{contextMessage}</p>
             </div>}
             <div className="pt-44 w-full min-[475px]:w-4/5 min-[640px]:w-3/5 min-[900px]:w-2/5 px-2 m-auto h-screen">
-                <form className="w-full py-16 px-6 rounded-lg shadow-sm shadow-blue-900 flex flex-col gap-6" onSubmit={formSubmitHandler}>
-                    <h1 className="text-white font-[Yekan-Bold] text-lg mx-auto">فرم تأیید حساب کاربری</h1>
-                    <p className="text-gray-400 font-[Yekan-Medium] text-xs leading-6" dir="rtl">کد تأییدیه پیامک شده را وارد کنید.</p>
+                <form className="bg-gradient-to-b from-white to-gray-200 w-full py-16 px-6 rounded-lg shadow-lg flex flex-col gap-6" onSubmit={formSubmitHandler}>
+                    <h1 className="font-[Yekan-Bold] text-lg mx-auto">فرم تأیید حساب کاربری</h1>
+                    <p className="text-gray-500 font-[Yekan-Medium] text-xs leading-6" dir="rtl">کد تأییدیه پیامک شده را وارد کنید.</p>
                     <div className="flex flex-col gap-2 items-end">
-                        <label className="text-white font-[Yekan-Medium]">کد تأییدیه</label>
-                        <input type="text" name="verificationCode" className="rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setVerificationCode(event.target.value)} value={verificationCode} />
+                        <label className=" font-[Yekan-Medium]">کد تأییدیه</label>
+                        <input type="text" name="verificationCode" className="rounded-md border-2 outline-1 py-2 px-3 w-full" onChange={(event) => setVerificationCode(event.target.value)} value={verificationCode} />
                     </div>
                     <div className="flex flex-col mx-auto gap-3">
-                        <button className="text-white hover:bg-gradient-to-tr from-orange-700 to-orange-300 transition mx-auto rounded-md py-2 px-4 font-[Yekan-Medium] disabled:pointer-events-none disabled:text-gray-600" disabled={isSubmitDisabled || isLoading} type="submit">{isLoading ? "صبر کنید" : "فعال سازی حساب کاربری"}</button>
-                        <Link href="/accounts/verify-account/resend" className="text-white font-[Yekan-Medium] hover:text-gray-300 text-center">دریافت کد تأییدیه جدید</Link>
+                        <button className="hover:text-white hover:bg-gradient-to-tr from-orange-700 to-orange-300 transition mx-auto rounded-md py-2 px-4 font-[Yekan-Medium] disabled:pointer-events-none disabled:text-gray-400" disabled={isSubmitDisabled || isLoading} type="submit">{isLoading ? "صبر کنید" : "فعال سازی حساب کاربری"}</button>
+                        <Link href="/accounts/verify-account/resend" className="font-[Yekan-Medium] hover:text-gray-600 text-center ">دریافت کد تأییدیه جدید</Link>
                     </div>
                     {formError && <div dir="rtl" className="bg-red-600 leading-6 font-[Yekan-Medium] text-right p-3 rounded-md text-white text-xs">{formError}</div>}
                 </form>
