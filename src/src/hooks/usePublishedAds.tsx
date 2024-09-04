@@ -3,14 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 
 export interface searchedAds {
-    textIcontains?: string,
-    placeIcontains?: string,
-    hourPriceRange?: string,
-    dayPriceRange?: string,
-    weekPriceRange?: string,
-    monthPriceRange?: string,
-    categoryName?: string,
-    page?: number
+    textIcontains?: string | null,
+    placeIcontains?: string | null,
+    hourPriceRange?: string | null,
+    dayPriceRange?: string | null,
+    weekPriceRange?: string | null,
+    monthPriceRange?: string | null,
+    categoryName?: string | null,
+    page?: string | null
 }
 
 export interface Advertisement {

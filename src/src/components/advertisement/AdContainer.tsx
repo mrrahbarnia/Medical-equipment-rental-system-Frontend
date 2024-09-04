@@ -2,7 +2,6 @@
 import { GrFormPrevious } from "react-icons/gr"; 
 import { MdNavigateNext } from "react-icons/md"; 
 import axios from "axios";
-import Link from "next/link";
 import { convertEnglishNumberToPersian } from "@/utils/convertNumberToPersian";
 import { AiOutlineSearch } from "react-icons/ai";
 import { usePublishedAds } from "@/hooks/usePublishedAds";
@@ -11,6 +10,7 @@ import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import AdList from "./AdList";
 import { errorHandler } from "@/utils/messageUtils";
 import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { ChangeEvent, FormEvent, Fragment, useState, useEffect } from "react";
 
 const AdContainer = () => {
@@ -23,16 +23,21 @@ const AdContainer = () => {
     const [debouncedCategory, setDebouncedCategories] = useState<string>();
     const [openCategoriesMenu, setOpenCategoriesMenu] = useState<boolean>(false);
     const [categoriesLoading, setCategoriesLoading] = useState<boolean>(false);
-    const [pageNumber, setPageNumber] = useState<number>(1);
     const searchParam = useSearchParams();
+    const router = useRouter();
 
     useEffect(() => {
-        if (searchParam.get("page")) {
-            const pageNumberParam = Number(searchParam.get("page"))
-            setPageNumber(pageNumberParam)
-        }
-        setSearchedParams({...searchParam, page: pageNumber})
-    }, [searchParam, pageNumber])
+        setSearchedParams({
+            "textIcontains": searchParam.get("textIcontains"),
+            "placeIcontains": searchParam.get("placeIcontains"),
+            "categoryName": searchParam.get("categoryName"),
+            "hourPriceRange": searchParam.get("hourPriceRange"),
+            "dayPriceRange": searchParam.get("dayPriceRange"),
+            "weekPriceRange": searchParam.get("weekPriceRange"),
+            "monthPriceRange": searchParam.get("monthPriceRange"),
+            "page": searchParam.get("page")
+        })
+    }, [searchParam])
 
     useEffect(() => {
         setCategoriesLoading(true);
@@ -47,7 +52,6 @@ const AdContainer = () => {
 
     useEffect(() => {
         if (debouncedCategory) {
-            
             const url = `${EXTERNAL_BASE_ENDPOINTS}/admin/search-categories/`
             const fetchCategories = async() => {
                 try {
@@ -55,7 +59,6 @@ const AdContainer = () => {
                     setCategoriesResponse(result.data);
                     
                 } catch (error) {
-                    
                 }
             };
             fetchCategories();
@@ -87,27 +90,19 @@ const AdContainer = () => {
             return;
         }
         const hourlyRangeInput = `${eventForm.minHourlyPrice.value}, ${eventForm.maxHourlyPrice.value}`;
-        const hourlyRangeParam = hourlyRangeInput === ", " ? undefined : hourlyRangeInput;
+        const hourlyRangeParam = hourlyRangeInput === ", " ? "" : hourlyRangeInput;
 
         const dayRangeInput = `${eventForm.minDailyPrice.value}, ${eventForm.maxDailyPrice.value}`;
-        const dayRangeParam = dayRangeInput === ", " ? undefined : dayRangeInput;
+        const dayRangeParam = dayRangeInput === ", " ? "" : dayRangeInput;
 
         const weekRangeInput = `${eventForm.minWeeklyPrice.value}, ${eventForm.maxWeeklyPrice.value}`;
-        const weekRangeParam = weekRangeInput === ", " ? undefined : weekRangeInput;
+        const weekRangeParam = weekRangeInput === ", " ? "" : weekRangeInput;
 
         const monthRangeInput = `${eventForm.minMonthlyPrice.value}, ${eventForm.maxMonthlyPrice.value}`;
-        const monthRangeParam = monthRangeInput === ", " ? undefined : monthRangeInput;
-
-        setSearchedParams({
-            "textIcontains": eventForm.textIcontains.value,
-            "placeIcontains": eventForm.placeIcontains.value,
-            "categoryName": eventForm.categoryName.value,
-            "hourPriceRange": hourlyRangeParam,
-            "dayPriceRange": dayRangeParam,
-            "weekPriceRange": weekRangeParam,
-            "monthPriceRange": monthRangeParam
-        })
+        const monthRangeParam = monthRangeInput === ", " ? "" : monthRangeInput;
+        const url = `/advertisement/?page=1&textIcontains=${eventForm.textIcontains.value}&placeIcontains=${eventForm.placeIcontains.value}&categoryName=${eventForm.categoryName.value}&hourPriceRange=${hourlyRangeParam}&dayPriceRange=${dayRangeParam}&weekPriceRange=${weekRangeParam}&monthPriceRange=${monthRangeParam}`
         setSearchMenuStatus(false);
+        return router.replace(url)
     }
 
     const categoryAutoCompleteHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -142,8 +137,16 @@ const AdContainer = () => {
     } else {
         hasNextPage = false;
     }
-    
-    
+
+    const previousHandler = () => {
+        const url = `/advertisement/?page=${searchParam.get("page") ? Number(searchParam.get("page")) -1  : "1"}${searchParam.get("textIcontains") ? `&textIcontains=${searchParam.get("textIcontains")}` : ""}${searchParam.get("placeIcontains") ? `&placeIcontains=${searchParam.get("placeIcontains")}` : ""}${searchParam.get("categoryName") ? `&categoryName=${searchParam.get("categoryName")}` : ""}${searchParam.get("hourPriceRange") ? `&hourPriceRange=${searchParam.get("hourPriceRange")}` : ""}${searchParam.get("dayPriceRange") ? `&dayPriceRange=${searchParam.get("dayPriceRange")}` : ""}${searchParam.get("weekPriceRange") ? `&weekPriceRange=${searchParam.get("weekPriceRange")}` : ""}${searchParam.get("monthPriceRange") ? `&monthPriceRange=${searchParam.get("monthPriceRange")}` : ""}`
+        return router.replace(url);
+    }
+
+    const nextHandler = () => {
+        const url = `/advertisement/?page=${searchParam.get("page") ? Number(searchParam.get("page")) + 1  : "2"}${searchParam.get("textIcontains") ? `&textIcontains=${searchParam.get("textIcontains")}` : ""}${searchParam.get("placeIcontains") ? `&placeIcontains=${searchParam.get("placeIcontains")}` : ""}${searchParam.get("categoryName") ? `&categoryName=${searchParam.get("categoryName")}` : ""}${searchParam.get("hourPriceRange") ? `&hourPriceRange=${searchParam.get("hourPriceRange")}` : ""}${searchParam.get("dayPriceRange") ? `&dayPriceRange=${searchParam.get("dayPriceRange")}` : ""}${searchParam.get("weekPriceRange") ? `&weekPriceRange=${searchParam.get("weekPriceRange")}` : ""}${searchParam.get("monthPriceRange") ? `&monthPriceRange=${searchParam.get("monthPriceRange")}` : ""}`
+        return router.replace(url);
+    }
 
     return (
         <Fragment>
@@ -184,28 +187,28 @@ const AdContainer = () => {
                         </ul>}
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                        <label className="font-[Yekan-Medium]">(ریال)قیمت ساعتی</label>
+                        <label className="font-[Yekan-Medium]">(تومان)قیمت ساعتی</label>
                         <div className="flex flex-col items-end gap-2">
                             <input name="minHourlyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="از مبلغ"/>
                             <input name="maxHourlyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="تا مبلغ" />
                         </div>
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                        <label className="font-[Yekan-Medium]">(ریال)قیمت روزانه</label>
+                        <label className="font-[Yekan-Medium]">(تومان)قیمت روزانه</label>
                         <div className="flex flex-col items-end gap-2">
                             <input name="minDailyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="از مبلغ"/>
                             <input name="maxDailyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="تا مبلغ" />
                         </div>
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                        <label className="font-[Yekan-Medium]">(ریال)قیمت هفتگی</label>
+                        <label className="font-[Yekan-Medium]">(تومان)قیمت هفتگی</label>
                         <div className="flex flex-col items-end gap-2">
                             <input name="minWeeklyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="از مبلغ"/>
                             <input name="maxWeeklyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="تا مبلغ" />
                         </div>
                     </div>
                     <div className="flex flex-col gap-2 items-end">
-                        <label className="font-[Yekan-Medium]">(ریال)قیمت ماهانه</label>
+                        <label className="font-[Yekan-Medium]">(تومان)قیمت ماهانه</label>
                         <div className="flex flex-col items-end gap-2">
                             <input name="minMonthlyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="از مبلغ"/>
                             <input name="maxMonthlyPrice" type="number" className="border-2 font-[Yekan-Medium] py-1 px-2 rounded-lg" dir="rtl" placeholder="تا مبلغ" />
@@ -214,23 +217,20 @@ const AdContainer = () => {
                     {formError && <p className="bg-red-600 text-white font-[Yekan-Medium] rounded-md text-ms text-right py-2 px-4" dir="rtl">{formError}</p>}
                     <button className="text-white font-[Yekan-Bold] bg-green-600 w-fit mx-auto px-6 py-2 rounded-md hover:bg-green-700 mt-4" type="submit">جستجو</button>
                 </form>
-
             </div>
             {searchMenuStatus && <div className="fixed left-0 top-0 z-30 bg-black h-full w-full opacity-65"></div>}
 
             {/* Pagination */}
             <div className="flex items-center justify-center gap-12 mt-8">
-                {hasPreviousPage && <Link href={`/advertisement/?page=${pageNumber - 1}`} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
+                {hasPreviousPage && <button onClick={previousHandler} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
                     <GrFormPrevious size={25} />
                     <p className="font-[Yekan-Medium]">صفحه قبل</p>
-                </Link>}
-                {hasNextPage && <Link href={`/advertisement/?page=${pageNumber + 1}`} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
+                </button>}
+                {hasNextPage && <button onClick={nextHandler} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
                     <p className="font-[Yekan-Medium]">صفحه بعد</p>
                     <MdNavigateNext size={28} />
-                </Link>}
+                </button>}
             </div>
-            
-            
         </Fragment>
     )
 };
