@@ -15,6 +15,7 @@ export const GET = async (request: NextRequest) => {
         }
     })
     const responseJson = await response.json()
+    
     if (response.ok) {
         return NextResponse.json(responseJson, {status: 200})
     } else {
