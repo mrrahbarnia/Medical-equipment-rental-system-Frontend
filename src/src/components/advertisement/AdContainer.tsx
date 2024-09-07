@@ -132,7 +132,7 @@ const AdContainer = () => {
         hasPreviousPage = false;
     }
 
-    if (Number(searchParam.get("page")) * 10 <= itemCount) {
+    if ((Number(searchParam.get("page")) ? Number(searchParam.get("page")) : 1 ) * 10 <= itemCount) {
         hasNextPage = true;
     } else {
         hasNextPage = false;
@@ -175,7 +175,7 @@ const AdContainer = () => {
                         <input name="textIcontains" type="text" className="h-9 px-3 py-1 border-2 rounded-md font-[Yekan-Medium]" dir="rtl" />
                     </div>
                     <div className="flex flex-col text-end gap-2">
-                        <label className="font-[Yekan-Medium]">مکان</label>
+                        <label className="font-[Yekan-Medium]">آدرس</label>
                         <input name="placeIcontains" type="text" className="border-2 h-9 px-3 py-1 rounded-md font-[Yekan-Medium]" dir="rtl" />
                     </div>
                     <div className="flex flex-col text-end gap-2">

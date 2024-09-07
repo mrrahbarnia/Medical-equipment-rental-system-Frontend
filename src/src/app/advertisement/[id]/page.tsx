@@ -1,4 +1,5 @@
 "use client"
+import { MdOutlineDangerous } from "react-icons/md";
 import { BiVideo } from "react-icons/bi";
 import { BsImages } from "react-icons/bs"; 
 import { AiFillWarning } from "react-icons/ai"; 
@@ -13,7 +14,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { errorHandler } from "@/utils/messageUtils";
 import { convertEnglishNumberToPersian } from "@/utils/convertNumberToPersian";
-import React, { useEffect, useState, Suspense, Fragment } from "react";
+import React, { useState, Suspense, Fragment } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa"
@@ -82,19 +83,19 @@ const Page = ({params}: {params: {id: string}}) => {
                     <div className="flex flex-col items-end bg-gradient-to-l from-white to-gray-200 rounded-md shadow-lg px-2 py-3 w-11/12 mx-auto gap-3">
                         <h1 className="text-lg font-[Yekan-Bold] text-right">{data?.title}</h1>
                         <p className="text-white font-[Yekan-Medium] text-sm bg-green-600 w-fit py-1 px-2 rounded-md">دسته بندی:{data?.categoryName}</p>
-                        <div className="w-full flex flex-col md:flex-row items-end md:items-start gap-3">
+                        <div className="w-full flex flex-col min-[885px]:flex-row items-end md:items-start gap-3">
                             {data && <div className="w-full">
                                 <Suspense fallback={<p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p>}>
                                     <Image onClick={() => setShowImagesSlider(true)} className="cursor-pointer rounded-lg w-full object-cover " src={data?.imageUrls[0]} width={500} height={500} alt={`${data?.title} image`} />
                                 </Suspense>
                             </div>}
-                            <div className="w-full flex flex-col gap-2 items-end">
-                                <div className="flex flex-col items-end gap-1 bg-yellow-400 rounded-md py-1 px-2">
+                            <div className="w-full flex flex-col gap-2 items-end whitespace-normal break-words overflow-hidden">
+                                <div className={`flex flex-col justify-center items-end gap-1 ${!showPhoneNumber ? "bg-yellow-400" : "bg-red-600"} rounded-md py-1 px-2`}>
                                     <div className="flex items-center gap-2">
-                                        <p dir="rtl" className="font-[Yekan-Medium] text-xs">
+                                        <p dir="rtl" className={`${showPhoneNumber && "text-white"} font-[Yekan-Medium] text-xs`}>
                                             {!showPhoneNumber ? "شما در مشاهده شماره موبایل اجاره دهنده ها محدودیت روزانه و ماهانه دارید." : "شماره موبایل اجاره دهنده ها بصورت یکبار مصرف نمایش داده میشود,در صورت نیاز آن را ذخیره کنید."}
                                         </p>
-                                        <AiFillWarning size={25} />
+                                        {!showPhoneNumber ? <AiFillWarning size={25} /> : <MdOutlineDangerous className="text-white" size={25} />}
                                     </div>
                                     {!showPhoneNumber ? <button onClick={showPhoneNumberHandler} className="w-fit text-sm font-[Yekan-Medium] bg-violet-600 hover:bg-violet-400 active:scale-110 px-2 py-1 text-white rounded-md transition duration-200" type="button">{isLoading ? "صبر کنید" : "مشاهده شماره موبایل"}</button> : <span className="text-white font-mono bg-violet-600 px-2 py-1 rounded-md">{showPhoneNumber}</span>}
                                     {showPhoneNumberError && <p dir="rtl" className="text-right px-2 py-1 bg-red-600 rounded-md text-white text-xs font-[Yekan-Medium]">{showPhoneNumberError}</p>}
@@ -103,7 +104,7 @@ const Page = ({params}: {params: {id: string}}) => {
                                     <span className="font-[Yekan-Medium]">توضیحات</span>
                                     <TbFileDescription size={25} />
                                 </div>
-                                <p className="w-full leading-5 text-gray-600 bg-white rounded-md p-2 text-right font-[Yekan-Medium] text-xs md:text-sm">{data?.description}</p>
+                                <p dir="rtl" className="w-full leading-5 text-gray-600 bg-white rounded-md p-2 text-right font-[Yekan-Medium] text-xs md:text-sm">{data?.description}</p>
                                 <div className="flex items-center gap-1 justify-end">
                                     <span className="text-xs md:text-sm font-[Yekan-Medium]">{data?.place}</span>
                                     <ImLocation size={18} />
@@ -129,6 +130,7 @@ const Page = ({params}: {params: {id: string}}) => {
                                     calendar={persian}
                                     locale={persian_fa}
                                     hideYear
+                                    readOnly
                                 />
                                 </div>}
                             </div>
@@ -155,7 +157,7 @@ const Page = ({params}: {params: {id: string}}) => {
                                         <div className='flex h-full w-full items-center justify-center'>
                                             <Suspense fallback={<p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p>}>
                                                 <Image
-                                                    className="object-contain max-h-80"
+                                                    className="object-cover"
                                                     width={500} height={500} 
                                                     src={imageUrl} alt={`${data.title} image`}
                                                 />

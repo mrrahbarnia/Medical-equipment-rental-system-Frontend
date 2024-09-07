@@ -1,9 +1,9 @@
 "use client"
+import { TbBrandGoogleAnalytics } from "react-icons/tb"; 
 import { RiLockPasswordLine } from "react-icons/ri"; 
 import { MdManageAccounts } from "react-icons/md";
 import { FaBriefcaseMedical } from "react-icons/fa";
 import { BiMenu } from "react-icons/bi"; 
-import { MdOutlineManageAccounts } from "react-icons/md"; 
 import { FaSignOutAlt } from "react-icons/fa";
 import { useState } from "react";
 import { RiAccountCircleFill } from "react-icons/ri";
@@ -42,8 +42,8 @@ export const Header = () => {
                 <MdManageAccounts size={25} />
                 {showProfile && <div className="shadow-lg bg-white absolute p-3 rounded-md min-w-40 space-y-2">
                     <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm ">
-                        <Link href="#" className="font-[Yekan-Bold]">داشبورد</Link>
-                        <MdOutlineManageAccounts size={20} />
+                        <Link href="/my-advertisement/" className="font-[Yekan-Bold]">آگهی های من</Link>
+                        <TbBrandGoogleAnalytics size={20} />
                     </div>
                     <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm">
                         <Link href="/accounts/change-password/" className="font-[Yekan-Bold]">تغییر رمز عبور</Link>
@@ -65,8 +65,8 @@ export const Header = () => {
                     </div>}
                     <Link href="/" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">خانه</Link>
                     <Link href="/advertisement" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">آگهی ها</Link>
+                    <Link href="/add-advertisement/" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">ثبت آگهی</Link>
                     <Link href="/ticket/" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">تماس با ما</Link>
-                    <Link href="#" className="hover:bg-slate-100 w-full text-right px-3 py-1 rounded-md font-[Yekan-Medium] text-sm">قوانین جاره</Link>
                 </div>}
             </div>
         </div>
@@ -77,8 +77,8 @@ export const Header = () => {
                 <Link href="/accounts/login" className="font-[Yekan-Medium] text-sm">ورود/ثبت نام</Link>
                 <RiAccountCircleFill size={25} className="cursor-pointer" />
             </div>}
-            <Link href="#" className="font-[Yekan-Medium] text-sm hover:text-slate-400">قوانین جاره</Link>
             <Link href="/ticket/" className="font-[Yekan-Medium] text-sm hover:text-slate-400">تماس با ما</Link>
+            <Link href="/add-advertisement/" className="font-[Yekan-Medium] text-sm hover:text-slate-400">ثبت آگهی</Link>
             <Link href="/advertisement" className="font-[Yekan-Medium] text-sm hover:text-slate-400">آگهی ها</Link>
             <Link href="/" className="font-[Yekan-Medium] text-sm hover:text-slate-400">خانه</Link>
             
