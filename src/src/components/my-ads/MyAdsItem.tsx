@@ -1,5 +1,4 @@
 "use client"
-import axios from "axios";
 import { MdOutlineDangerous } from "react-icons/md";
 import { Fragment, useState } from "react";
 import { AiOutlineDelete } from "react-icons/ai";
@@ -31,7 +30,7 @@ const MyAdsItem = ({ad}: {key: string, ad: MyAdsType}) => {
                 </div>
             </div>}
             <div className="relative shadow-md h-auto gap-1 flex items-center p-2 rounded-md justify-end whitespace-normal break-words overflow-hidden">
-                <button type="button" onClick={() => setIsOpenModal(true)} className="z-30 absolute top-2 left-2 bg-red-50 hover:bg-red-200 active:bg-red-200 transition-colors p-2 rounded-md text-red-500 ">
+                <button type="button" onClick={() => setIsOpenModal(true)} className="z-20 absolute top-2 left-2 bg-red-50 hover:bg-red-200 active:bg-red-200 transition-colors p-2 rounded-md text-red-500 ">
                     <AiOutlineDelete size={25} />
                 </button>
                 <div className="flex flex-col gap-2 h-32 w-full items-end">

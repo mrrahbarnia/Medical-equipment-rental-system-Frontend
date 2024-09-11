@@ -14,7 +14,7 @@ const Page = () => {
             </div>
     }
     return (
-        <div className="pt-72 w-11/12 mx-auto min-h-screen">
+        <div className="pt-40 w-11/12 mx-auto min-h-screen">
             {isPending ? <p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p> : data ? <MyAdsList adsList={data}/> : undefined}
         </div>
     )

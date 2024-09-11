@@ -3,6 +3,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import { useRouter } from "next/navigation";
 
 const LOCAL_STORAGE_KEY: string = "is-logged-in";
+const LOCAL_RULE_KEY: string = "rule"
 const LOGOUT_REDIRECT: string = "/"
 
 type propsType = {
@@ -11,10 +12,12 @@ type propsType = {
 
 type createContextType = {
     isAuthenticated: boolean,
+    rule: string,
     login: () => void,
     logout: () => void,
     authenticatedPages: () => void,
-    notAuthenticatedPages: () => void
+    notAuthenticatedPages: () => void,
+    adminPages: () => void
 }
 
 const authContext = createContext<createContextType>({} as createContextType)
@@ -22,13 +25,18 @@ const authContext = createContext<createContextType>({} as createContextType)
 
 export const AuthProvider = (props: propsType) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [rule, setRule] = useState<"admin" | "user">("user");
     const router = useRouter();
 
     useEffect(() => {
         const localKey: string | null = localStorage.getItem(LOCAL_STORAGE_KEY);
+        const userRule = localStorage.getItem(LOCAL_RULE_KEY)
         if (localKey) {
             const intLocalKey: number = parseInt(localKey);
             setIsAuthenticated(intLocalKey === 1);
+        }
+        if (userRule === "admin") {
+            setRule("admin");
         }
     }, [])
 
@@ -54,11 +62,19 @@ export const AuthProvider = (props: propsType) => {
         }
     };
 
+    const adminPages = () => {
+        if (rule !== "admin") {
+            return router.back()
+        }
+    }
+
     return <authContext.Provider value={
         {
             isAuthenticated,
             login, logout,
-            authenticatedPages, notAuthenticatedPages
+            authenticatedPages, notAuthenticatedPages,
+            rule,
+            adminPages
         }
     }>
         {props.children}

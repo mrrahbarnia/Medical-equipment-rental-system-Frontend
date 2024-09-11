@@ -1,4 +1,6 @@
 "use client"
+import { BiCategoryAlt } from "react-icons/bi"; 
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import { TbBrandGoogleAnalytics } from "react-icons/tb"; 
 import { RiLockPasswordLine } from "react-icons/ri"; 
 import { MdManageAccounts } from "react-icons/md";
@@ -40,7 +42,15 @@ export const Header = () => {
         <div className="flex items-center space-x-2">
             {auth.isAuthenticated && <div className="cursor-pointer relative" onClick={showProfileHandler}>
                 <MdManageAccounts size={25} />
-                {showProfile && <div className="shadow-lg bg-white absolute p-3 rounded-md min-w-40 space-y-2">
+                {showProfile && <div className="z-40 shadow-lg bg-white absolute p-3 rounded-md min-w-40 space-y-2">
+                    {auth.rule === "admin" && <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm ">
+                        <Link href="/admin/" className="font-[Yekan-Bold]">همه آگهی ها</Link>
+                        <MdOutlineAdminPanelSettings size={20} />
+                    </div>}
+                    {auth.rule === "admin" && <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm ">
+                        <Link href="/categories/" className="font-[Yekan-Bold]">دسته بندی ها</Link>
+                        <BiCategoryAlt size={20} />
+                    </div>}
                     <div className="flex items-center justify-end space-x-2 hover:bg-slate-100 rounded-md px-3 py-1 text-sm ">
                         <Link href="/my-advertisement/" className="font-[Yekan-Bold]">آگهی های من</Link>
                         <TbBrandGoogleAnalytics size={20} />

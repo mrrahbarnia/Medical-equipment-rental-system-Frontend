@@ -1,8 +1,13 @@
 "use server"
 import { NextRequest, NextResponse } from "next/server"
-import { changePasswordData } from "@/types/apis/changePassword";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import { deleteToken, getToken } from "@/utils/authUtils";
+
+export interface changePasswordData {
+    oldPassword: string,
+    newPassword: string,
+    confirmPassword: string
+}
 
 const EXTERNAL_CHANGE_PASSWORD_API: string = `${EXTERNAL_BASE_ENDPOINTS}/auth/change-password/`;
 

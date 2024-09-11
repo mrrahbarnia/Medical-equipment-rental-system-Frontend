@@ -1,7 +1,8 @@
 "use client"
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
+
+const INTERNAL_DETAIL_AD_API: string = "/apis/admin/"
 
 export interface responseData {
     id: string
@@ -15,19 +16,22 @@ export interface responseData {
     monthPrice?: string | null,
     imageUrls: string[],
     days: string[],
-    categoryName: string
+    categoryName: string,
+    published: boolean,
+    isDeleted: boolean
 }
 
-export const usePublicDetailAd = (id: string) => {
+export const useAdminAdDetail = (id: string) => {
     const {data, isError, isPending} = useQuery({
-        queryKey: ["AdDetail", id],
-        staleTime: 10000,
-        refetchOnWindowFocus: false,
+        queryKey: ["AdAdminDetail", id],
+        staleTime: 5000,
         queryFn: async function () {
-            const url = `${EXTERNAL_BASE_ENDPOINTS}/advertisement/get-advertisement/${id}`;
+            const url = `${INTERNAL_DETAIL_AD_API}/${id}`;
             const result = await axios.get<responseData>(url);
             return result.data
         }
     })
     return {isError, data, isPending}
 }
+
+export default useAdminAdDetail;

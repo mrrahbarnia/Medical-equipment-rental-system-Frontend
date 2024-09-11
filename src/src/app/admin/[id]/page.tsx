@@ -1,40 +1,43 @@
 "use client"
-import { MdOutlineDangerous } from "react-icons/md";
-import { BiVideo } from "react-icons/bi";
+import { AiOutlineLoading3Quarters, AiFillCalendar } from "react-icons/ai";
+import { MdOutlineDeleteOutline, MdOutlineDeleteForever, MdOutlineDangerous } from "react-icons/md";
+import { BiVideo, BiArrowBack } from "react-icons/bi";
 import { BsImages } from "react-icons/bs"; 
-import { AiFillWarning } from "react-icons/ai"; 
-import axios from "axios";
-import { AiFillCalendar } from "react-icons/ai"; 
 import { IoIosPricetags } from "react-icons/io"; 
 import { ImLocation } from "react-icons/im"; 
-import { BiArrowBack } from "react-icons/bi"; 
 import { TbFileDescription } from "react-icons/tb"; 
-import { usePublicDetailAd } from "@/hooks/useAdDetail";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { errorHandler } from "@/utils/messageUtils";
 import { convertEnglishNumberToPersian } from "@/utils/convertNumberToPersian";
-import React, { useState, Suspense, Fragment } from "react";
+import React, { useState, Suspense, Fragment, useEffect } from "react";
 import { Calendar } from "react-multi-date-picker";
 import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa"
+import persian_fa from "react-date-object/locales/persian_fa";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules'
+import { Navigation, Pagination } from 'swiper/modules';
 import { useAuth } from "@/contexts/authProvider";
+import usePublishAd from "@/hooks/usePublishAd";
+import useUnpublishAd from "@/hooks/useUnpublishAd";
+import useDeleteAd from "@/hooks/useDeleteAd";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import useAdminAdDetail from "@/hooks/useAdminAdDetail";
 
-const INTERNAL_SHOW_PHONE_NUMBER_API: string = "/apis/show-phone-number/"
 
 const Page = ({params}: {params: {id: string}}) => {
     const auth = useAuth();
     const router = useRouter();
-    const {data, isError, isPending} = usePublicDetailAd(params.id)
-    const [showPhoneNumberError, setShowPhoneNumberError] = useState<string>("")
-    const [showPhoneNumber, setShowPhoneNumber] = useState<string | undefined>("")
+    const {data, isError, isPending} = useAdminAdDetail(params.id);
     const [showImagesSlider, setShowImagesSlider] = useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const {publishedMutate} = usePublishAd()
+    const {UnpublishedMutate} = useUnpublishAd()
+    const {deleteMutate, deletePending} = useDeleteAd();
+
+    useEffect(() => {
+        auth.adminPages();
+    }, [auth])
 
     const backHandler = () => {
         return router.back()
@@ -51,35 +54,31 @@ const Page = ({params}: {params: {id: string}}) => {
             </div>
     }
 
-    const showPhoneNumberHandler = () => {
-        setIsLoading(true);
-        axios.get(`${INTERNAL_SHOW_PHONE_NUMBER_API}/${data?.id}`
-        ).catch((error) => {
-            if (error.status === 401) {
-                auth.logout()
-                setIsLoading(false);
-                errorHandler("برای مشاهده شماره موبایل اجاره دهنده ابتدا بایستی وارد حساب کاربری خود شوید.", setShowPhoneNumberError)
-                return;
-            }
-            if (error.status === 403) {
-                setIsLoading(false);
-                errorHandler("تعداد دفعات مشاهده شماره موبایل اجاره دهنده ها بیشتر از حد مجاز شده است.", setShowPhoneNumberError)    
-                return;
-            }
-            if (error.response && error.response.data?.detail === "This account is banned.") {
-                setIsLoading(false);
-                errorHandler("حساب کاربری شما مسدود شده است.", setShowPhoneNumberError)
-                return;
-            }
-        }).then((response) => {
-            setIsLoading(false);
-            setShowPhoneNumber(response?.data.phoneNumber);
-            return;
-        })
+    const publishedHandler = (id: string) => {
+        publishedMutate(id);
+    }
+
+    const unPublishedHandler = (id: string) => {
+        UnpublishedMutate(id);
+    }
+
+    const deleteHandler = (id: string) => {
+        deleteMutate(id).then(() => setIsOpenModal(false));
+        return router.replace("/admin/")
     }
     
     return  (
             <Fragment>
+                {isOpenModal && <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg h-56 flex flex-col items-center justify-center gap-7 w-80">
+                    <div className="flex items-center justify-center gap-1 p-3">
+                        <p dir="rtl" className="font-[Yekan-Medium] overflow-hidden">مطمئن هستید؟</p>
+                        <MdOutlineDangerous size={25} className="text-red-600" /> 
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button className="font-[Yekan-Medium] bg-green-50 text-green-600 px-6 py-1 rounded-md hover:bg-green-200 active:bg-green-200" onClick={() => setIsOpenModal(false)}>خیر</button>
+                        <button className="font-[Yekan-Black] bg-red-50 text-red-500 px-6 py-1 rounded-md hover:bg-red-200 active:bg-red-200" onClick={() => deleteHandler(params.id)}>{!deletePending ? "بله" : <AiOutlineLoading3Quarters size={22} className="animate-spin" />}</button>
+                    </div>
+                </div>}
                 <div className="pt-36">
                     <div className="ml-4 mb-8 flex items-center gap-1 bg-violet-400 w-fit px-1 py-1 rounded-lg cursor-pointer hover:scale-110 transition duration-300  shadow-md shadow-black">
                         <BiArrowBack size={20} />
@@ -87,7 +86,22 @@ const Page = ({params}: {params: {id: string}}) => {
                     </div>
                     <div className="flex flex-col items-end bg-gradient-to-l from-white to-gray-200 rounded-md shadow-lg px-2 py-3 w-11/12 mx-auto gap-3">
                         <h1 className="text-lg font-[Yekan-Bold] text-right">{data?.title}</h1>
-                        <p className="text-white font-[Yekan-Medium] text-sm bg-green-600 w-fit py-1 px-2 rounded-md">دسته بندی:{data?.categoryName}</p>
+                        <div className="flex w-full justify-between">
+                            <div className="flex flex-col gap-1 items-start">
+                                <button type="button" className="p-1 bg-red-50 hover:bg-red-200 active:bg-red-200 transition-colors text-red-500 rounded-md" onClick={() => setIsOpenModal(true)}><MdOutlineDeleteOutline size={25} /></button>
+                                {!data?.published && <button type="button" className="font-[Yekan-Medium] p-1 bg-violet-100 hover:bg-violet-300 active:bg-violet-300 transition-colors text-violet-800 rounded-md" onClick={() => publishedHandler(params.id)}>انتشار</button>}
+                                {data?.published && <button type="button" className={`font-[Yekan-Medium] p-1 bg-yellow-100 hover:bg-yellow-300 active:bg-yellow-300 transition-colors text-yellow-800 rounded-md`} onClick={() => unPublishedHandler(params.id)}>لغو انتشار</button>}
+                            </div>
+                            <div className="flex flex-col gap-1 items-end">
+                                <p className="text-white font-[Yekan-Medium] text-sm bg-green-600 w-fit py-1 px-2 rounded-md">دسته بندی:{data?.categoryName}</p>
+                                <p className={`text-white font-[Yekan-Medium] text-sm  w-fit py-1 px-2 rounded-md ${data?.published ? "bg-green-600" : "bg-red-600" }`}>{data?.published ? "منتشر شده" : "منتشر نشده" }</p>
+                                <div className={`flex items-center gap-1 ${data?.isDeleted ? "bg-red-600" : "bg-green-600" } py-1 px-2 rounded-md text-white`}>
+                                    <p className="font-[Yekan-Medium] text-sm w-fit">{data?.isDeleted ? "پاک شده" : "پاک نشده" }</p>
+                                    {data?.isDeleted && <MdOutlineDeleteOutline size={20} />}
+                                    {!data?.isDeleted && <MdOutlineDeleteForever size={20} />}
+                                </div>
+                            </div>
+                        </div>
                         <div className="w-full flex flex-col min-[885px]:flex-row items-end md:items-start gap-3">
                             {data && <div className="w-full">
                                 <Suspense fallback={<p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p>}>
@@ -95,16 +109,6 @@ const Page = ({params}: {params: {id: string}}) => {
                                 </Suspense>
                             </div>}
                             <div className="w-full flex flex-col gap-2 items-end whitespace-normal break-words overflow-hidden">
-                                <div className={`flex flex-col justify-center items-end gap-1 ${!showPhoneNumber ? "bg-yellow-400" : "bg-red-600"} rounded-md py-1 px-2`}>
-                                    <div className="flex items-center gap-2">
-                                        <p dir="rtl" className={`${showPhoneNumber && "text-white"} font-[Yekan-Medium] text-xs`}>
-                                            {!showPhoneNumber ? "شما در مشاهده شماره موبایل اجاره دهنده ها محدودیت روزانه و ماهانه دارید." : "شماره موبایل اجاره دهنده ها بصورت یکبار مصرف نمایش داده میشود,در صورت نیاز آن را ذخیره کنید."}
-                                        </p>
-                                        {!showPhoneNumber ? <AiFillWarning size={25} /> : <MdOutlineDangerous className="text-white" size={25} />}
-                                    </div>
-                                    {!showPhoneNumber ? <button onClick={showPhoneNumberHandler} className="w-fit text-sm font-[Yekan-Medium] bg-violet-600 hover:bg-violet-400 active:scale-110 px-2 py-1 text-white rounded-md transition duration-200" type="button">{isLoading ? "صبر کنید" : "مشاهده شماره موبایل"}</button> : <span className="text-white font-mono bg-violet-600 px-2 py-1 rounded-md">{showPhoneNumber}</span>}
-                                    {showPhoneNumberError && <p dir="rtl" className="text-right px-2 py-1 bg-red-600 rounded-md text-white text-xs font-[Yekan-Medium]">{showPhoneNumberError}</p>}
-                                </div>
                                 <div className="flex items-center gap-1 justify-end">
                                     <span className="font-[Yekan-Medium]">توضیحات</span>
                                     <TbFileDescription size={25} />
@@ -142,6 +146,7 @@ const Page = ({params}: {params: {id: string}}) => {
                         </div>
                     </div>
                 </div>
+                {isOpenModal && <div className="fixed left-0 top-0 z-40 bg-black h-full w-full opacity-85"></div>}
                 {showImagesSlider && <div className="h-screen w-full z-50 overflow-scroll fixed right-0 top-0">
                     <div className="rounded-lg px-1 pb-16 w-full mx-auto my-10 relative">
                         <button onClick={() => setShowImagesSlider(false)} className="text-red-600 bg-white py-2 px-4 active:bg-red-600 active:text-white hover:bg-red-600 hover:text-white rounded-full absolute right-4 top-4 font-bold">X</button>

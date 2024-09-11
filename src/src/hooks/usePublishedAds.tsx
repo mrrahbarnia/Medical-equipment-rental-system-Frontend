@@ -27,6 +27,7 @@ export const usePublishedAds = (searchParams?: searchedAds) => {
     const {data, isPending} = useQuery({
         queryKey: ["Ads", searchParams],
         staleTime: 5000,
+        // @ts-ignore
         queryFn: async function (queryKey: (string | searchedAds | undefined)[]) {
             const url = `${EXTERNAL_BASE_ENDPOINTS}/advertisement/published-advertisement/`
             const searchedParams = queryKey[1] as searchedAds;            

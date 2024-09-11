@@ -8,7 +8,8 @@ import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import DatePicker from "react-multi-date-picker";
 import { useAuth } from "@/contexts/authProvider";
 import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa"
+import persian_fa from "react-date-object/locales/persian_fa";
+import { useRouter } from "next/navigation";
 
 const INTERNAL_ADD_ADVERTISEMENT_API: string = "/apis/add-advertisement/"
 
@@ -25,7 +26,7 @@ const Page = () => {
     const [selectedPersianDays, setSelectedPersianDays] = useState<string[]>();
     const [selectedFormattedDays, setSelectedFormattedDays] = useState<string[]>([]);
     const [formError, setFormError] = useState<string>("");
-    const [responseMessage, setResponseMessage] = useState<string>("");
+    const router = useRouter();
 
     useEffect(() => {
         if (selectedPersianDays && selectedPersianDays.length > 0) {
@@ -48,9 +49,8 @@ const Page = () => {
         axios.post(INTERNAL_ADD_ADVERTISEMENT_API, formData)
         .then(
             () => {
-                errorHandler("آگهی شما با موفقیت ثبت شد.", setResponseMessage)
                 setIsLoading(false);
-                return;
+                return router.replace("/my-advertisement/")
             }
         )
         .catch((error) => {
@@ -61,13 +61,13 @@ const Page = () => {
                 auth.logout();
                 return;
             }
-            if (error.response.data && error.response.data.detail === "There is no category with the provided name!") {
-                errorHandler("دسته بندی باید جزو موارد پیشنهاد شده باشد.", setFormError);
+            if (error.response && error.response.data?.detail === "This account is banned.") {
                 setIsLoading(false);
+                errorHandler("حساب کاربری شما مسدود شده است.", setFormError)
                 return;
             }
-            if (error.response.data && error.response.data.detail[0].msg === "Input should be a valid date or datetime, input is too short") {
-                errorHandler("حداقل یک روز جهت اجاره دادن کالا مورد نظر باید انتخاب شود.", setFormError)
+            if (error.response.data && error.response.data.detail === "There is no category with the provided name!") {
+                errorHandler("دسته بندی باید جزو موارد پیشنهاد شده باشد.", setFormError);
                 setIsLoading(false);
                 return;
             }
@@ -113,6 +113,11 @@ const Page = () => {
             }
             if (error.response.data && error.response.data.detail.includes("Image format must be in")) {
                 errorHandler("فرمت عکس های بارگذاری شده باید png یا jpg باشد.", setFormError);
+                setIsLoading(false);
+                return;
+            }
+            if (error.response.data && error.response.data.detail[0].msg === "Input should be a valid date or datetime, input is too short") {
+                errorHandler("حداقل یک روز جهت اجاره دادن کالا مورد نظر باید انتخاب شود.", setFormError)
                 setIsLoading(false);
                 return;
             }
@@ -200,7 +205,7 @@ const Page = () => {
                         <p dir="rtl" className="font-[Yekan-Medium] text-xs">حداکثر تعداد عکس های انتخاب شده سه عدد است.</p>
                         <MdOutlineDangerous size={25} />
                     </div>}
-                    
+
                     {/* @ts-ignore */}
                     <input type="file" id="image" name="images" multiple hidden onChange={(e) => setSelectedImages([e.target.files])}/>
                     <div className="flex items-center bg-yellow-400 rounded-md py-1 px-2 gap-1">
@@ -237,7 +242,6 @@ const Page = () => {
                 </div>
                 <button className="font-[Yekan-Medium] bg-violet-50 hover:bg-violet-200 active:bg-violet-200 active:scale-110 transition duration-200 rounded-md px-3 py-2 text-violet-700 disabled:pointer-events-none disabled:text-gray-400" disabled={isLoading} >{isLoading ? "لطفا تا پایان بارگذاری فایل ها منتظر بمانید" : "ثبت آگهی"}</button>
                 {formError && <p dir="rtl" className="bg-red-600 leading-6 font-[Yekan-Medium] text-right p-3 rounded-md text-white text-xs">{formError}</p>}
-                {responseMessage && <p dir="rtl" className="bg-green-600 font-[Yekan-Medium] text-right p-3 rounded-md text-white text-xs">{responseMessage}</p>}
             </form>
         </div>
     )

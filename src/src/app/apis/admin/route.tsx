@@ -1,22 +1,25 @@
 "use server"
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server";
+import { getToken } from "@/utils/authUtils";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
-import { deleteToken, getToken } from "@/utils/authUtils";
 
-const EXTERNAL_SHOW_PHONE_NUMBER_API: string = `${EXTERNAL_BASE_ENDPOINTS}/advertisement/show-phone-number`;
+const EXTERNAL_ALL_ADS_API: string = `${EXTERNAL_BASE_ENDPOINTS}/admin/all-advertisement/`
 
 export const GET = async (request: NextRequest) => {
+    const params = request.url.slice(32);
+
     const authToken = getToken();
-    const response = await fetch(`${EXTERNAL_SHOW_PHONE_NUMBER_API}${request.url.slice(44)}`, {
+    const response = await fetch(`${EXTERNAL_ALL_ADS_API}${params}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${authToken}`
         }
     })
+
     if (response.ok) {
         return NextResponse.json(await response.json(), {status: 200})
     } else {
-        return NextResponse.json(await response.json(), {status: response.status})
+        return NextResponse.json({"fetched": false}, {status: response.status})
     }
 }

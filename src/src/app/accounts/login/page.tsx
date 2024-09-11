@@ -40,7 +40,8 @@ const Page = () => {
 
         axios.post(
             INTERNAL_LOGIN_API, formData
-        ).then(() => {
+        ).then((response) => {
+            localStorage.setItem("rule", response.data?.user_rule)
             auth.login();
             return router.replace("/")
         }).catch(() => {
