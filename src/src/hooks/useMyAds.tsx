@@ -12,8 +12,16 @@ export interface MyAdsType {
     adminComment?: string | null
 }
 
+interface error {
+    response?: {
+        data?: {
+            detail?: string
+        }
+    }
+}
+
 export const useMyAds = () => {
-    const {data, isPending, isError} = useQuery({
+    const {data, isPending, error} = useQuery<MyAdsType[], error>({
         queryKey: ["My-Ads"],
         staleTime: 10000,
         queryFn: async function () {
@@ -22,5 +30,5 @@ export const useMyAds = () => {
         }
     })
 
-    return {data, isPending, isError}
+    return {data, isPending, error}
 }
