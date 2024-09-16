@@ -10,6 +10,7 @@ export interface responseData {
     description: string,
     video?: string | null,
     place: string,
+    adminComment?: string | null,
     hourPrice?: string | null,
     dayPrice?: string | null,
     weekPrice?: string | null,

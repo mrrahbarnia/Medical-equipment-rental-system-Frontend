@@ -1,5 +1,6 @@
 "use client"
-import { AiOutlineLoading3Quarters, AiFillCalendar } from "react-icons/ai";
+import { FaCommentDots } from "react-icons/fa";
+import { AiOutlineLoading3Quarters, AiFillCalendar, AiFillWarning } from "react-icons/ai";
 import { MdOutlineDeleteOutline, MdOutlineDeleteForever, MdOutlineDangerous } from "react-icons/md";
 import { BiVideo, BiArrowBack } from "react-icons/bi";
 import { BsImages } from "react-icons/bs"; 
@@ -19,6 +20,8 @@ import { useAuth } from "@/contexts/authProvider";
 import usePublishAd from "@/hooks/usePublishAd";
 import useUnpublishAd from "@/hooks/useUnpublishAd";
 import useDeleteAd from "@/hooks/useDeleteAd";
+import usePostAdminComment from "@/hooks/usePostAdminComment";
+import { errorHandler } from "@/utils/messageUtils";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -31,9 +34,12 @@ const Page = ({params}: {params: {id: string}}) => {
     const {data, isError, isPending} = useAdminAdDetail(params.id);
     const [showImagesSlider, setShowImagesSlider] = useState<boolean>(false);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+    const [adminCommentValue, setAdminCommentValue] = useState<string>();
     const {publishedMutate} = usePublishAd()
     const {UnpublishedMutate} = useUnpublishAd()
     const {deleteMutate, deletePending} = useDeleteAd();
+    const {adminCommentAsyncMutate} = usePostAdminComment();
+    const [commentFeedBack, setCommentFeedBack] = useState<string>("");
 
     useEffect(() => {
         auth.adminPages();
@@ -66,7 +72,13 @@ const Page = ({params}: {params: {id: string}}) => {
         deleteMutate(id).then(() => setIsOpenModal(false));
         return router.replace("/admin/")
     }
-    
+
+    const adminCommentHandler = (id: string) => {
+        adminCommentAsyncMutate({adminComment: adminCommentValue, id: id}).then(() => {
+            errorHandler("نظر شما با موفقیت ثبت شد.", setCommentFeedBack);
+        }).catch(() => {auth.logout()});
+    }
+
     return  (
             <Fragment>
                 {isOpenModal && <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-lg h-56 flex flex-col items-center justify-center gap-7 w-80">
@@ -142,6 +154,19 @@ const Page = ({params}: {params: {id: string}}) => {
                                     readOnly
                                 />
                                 </div>}
+                                <div className="bg-gradient-to-r from-violet-300 to-violet-100 py-2 px-3 rounded-md w-full flex flex-col gap-1 items-end font-[Yekan-Medium]">
+                                    <div className="flex items-baseline gap-1">
+                                        <label className="text-sm">نظر ادمین</label>
+                                        <FaCommentDots size={18} />
+                                    </div>
+                                    <textarea defaultValue={data?.adminComment ? data.adminComment : ""} onChange={(e) => setAdminCommentValue(e.target.value)} className="w-full resize-none rounded-md outline-1 py-2 px-3 text-sm" dir="rtl" rows={5}/>
+                                    {data && <button onClick={() => adminCommentHandler(data?.id)} className="w-[200px] mx-auto text-center bg-violet-50 hover:bg-violet-100 active:bg-violet-100 text-violet-800 px-5 py-1 rounded-md">ثبت نظر</button>}
+                                    {adminCommentValue && adminCommentValue?.length >= 1 && <div className="flex items-center gap-1 bg-yellow-400 rounded-md py-1 px-2">
+                                        <p className="font-[Yekan-Medium] text-xs" dir="rtl">در صورت ثبت نظر جدید برای یک آگهی,بصورت پیش فرض آگهی از حالت انتشار خارج خواهد شد.</p>
+                                        <AiFillWarning size={18} />
+                                    </div>}
+                                    {commentFeedBack && <p dir="rtl" className="bg-green-700 leading-6 px-3 py-1 rounded-md text-white text-xs w-full">{commentFeedBack}</p>}
+                                </div>
                             </div>
                         </div>
                     </div>

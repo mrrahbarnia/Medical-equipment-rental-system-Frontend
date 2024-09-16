@@ -12,7 +12,7 @@ type propsType = {
 
 type createContextType = {
     isAuthenticated: boolean,
-    rule: string,
+    rule: string | undefined,
     login: () => void,
     logout: () => void,
     authenticatedPages: () => void,
@@ -25,7 +25,7 @@ const authContext = createContext<createContextType>({} as createContextType)
 
 export const AuthProvider = (props: propsType) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [rule, setRule] = useState<"admin" | "user">("user");
+    const [rule, setRule] = useState<string>();
     const router = useRouter();
 
     useEffect(() => {
@@ -35,10 +35,10 @@ export const AuthProvider = (props: propsType) => {
             const intLocalKey: number = parseInt(localKey);
             setIsAuthenticated(intLocalKey === 1);
         }
-        if (userRule === "admin") {
-            setRule("admin");
+        if (userRule) {
+            setRule(userRule);
         }
-    }, [])
+    }, [rule])
 
     const login = () => {
         setIsAuthenticated(true);
@@ -47,6 +47,7 @@ export const AuthProvider = (props: propsType) => {
 
     const logout = () => {
         setIsAuthenticated(false);
+        localStorage.removeItem(LOCAL_RULE_KEY)
         return localStorage.setItem(LOCAL_STORAGE_KEY, "0");
     }
     // return router.replace(LOGOUT_REDIRECT);
@@ -63,7 +64,7 @@ export const AuthProvider = (props: propsType) => {
     };
 
     const adminPages = () => {
-        if (rule !== "admin") {
+        if (rule === "user") {
             return router.back()
         }
     }

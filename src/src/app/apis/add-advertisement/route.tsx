@@ -1,7 +1,7 @@
 "use server"
 import { NextRequest, NextResponse } from "next/server";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
-import { deleteToken, getToken } from "@/utils/authUtils";
+import { getToken } from "@/utils/authUtils";
 
 const EXTERNAL_ADD_ADVERTISEMENT_API: string = `${EXTERNAL_BASE_ENDPOINTS}/advertisement/add-advertisement/`;
 
@@ -18,6 +18,7 @@ export const POST = async (request: NextRequest) => {
         "title": formData.get("title"),
         "categoryName": formData.get("categoryName"),
         "place": formData.get("place"),
+        // @ts-ignore
         "days": formData.get("days")?.split(","),
         "hourPrice": Number(formData.get("hourPrice")),
         "dayPrice": Number(formData.get("dayPrice")),
@@ -25,7 +26,9 @@ export const POST = async (request: NextRequest) => {
         "monthPrice": Number(formData.get("monthPrice")),
         "description": formData.get("description")
     }))
+    // @ts-ignore
     if (formData.get("video").size !== 0) {
+        // @ts-ignore
         newFormData.append("video", formData.get("video"))
     }
     
@@ -41,7 +44,7 @@ export const POST = async (request: NextRequest) => {
         return NextResponse.json({"created": true, status: 201})
     }
     if (!response.ok) {
-        const jsonResponse = await response.json()
+        const jsonResponse = await response.json();
         return NextResponse.json(jsonResponse, {status: response.status})
     }
 }

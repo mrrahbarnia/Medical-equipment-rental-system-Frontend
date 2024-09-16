@@ -10,8 +10,6 @@ import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import useUpdateCategory from "@/hooks/useUpdateCategory";
 import { errorHandler } from "@/utils/messageUtils";
 
-const INTERNAL_CATEGORY_DETAIL_API: string = "/apis/categories/"
-
 const CategoryItem = ({category}: {category: categoryType}) => {
     const [isOpenDeleteModal, setIsOpenDeleteModal] = useState<boolean>(false);
     const [isOpenUpdateModal, setIsOpenUpdateModal] = useState<boolean>(false);
@@ -105,7 +103,7 @@ const CategoryItem = ({category}: {category: categoryType}) => {
         <Fragment>
             {isOpenDeleteModal && <div className="bg-gradient-to-b from-white to-gray-300 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col z-50 rounded-lg items-center justify-center gap-7 h-56 w-80">
                 <div className="flex items-center justify-center gap-1 p-3">
-                    <p dir="rtl" className="font-[Yekan-Medium] overflow-hidden text-sm w-48">آیا قصد پاک کردن آگهی با عنوان <span className="font-[Yekan-Black] text-red-600">{category.name}</span> را دارید؟</p>
+                    <p dir="rtl" className="font-[Yekan-Medium] overflow-hidden text-sm w-48">آیا قصد پاک کردن دسته بندی با نام <span className="font-[Yekan-Black] text-red-600">{category.name}</span> را دارید؟</p>
                     <MdOutlineDangerous size={25} className="text-red-600" /> 
                 </div>
                 <div className="flex items-center gap-2">

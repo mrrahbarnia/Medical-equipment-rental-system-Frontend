@@ -9,6 +9,7 @@ export interface MyAdsType {
     views: number,
     image: string,
     published: boolean
+    adminComment?: string | null
 }
 
 export const useMyAds = () => {
