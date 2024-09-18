@@ -7,7 +7,8 @@ const INTERNAL_ALL_ADS_API: string = "/apis/admin/"
 export interface searchParams {
     phoneNumber?: string | null,
     published?: boolean | null,
-    isDeleted?: boolean | null
+    isDeleted?: boolean | null,
+    page?: string | null
 }
 
 export interface adminAdType {

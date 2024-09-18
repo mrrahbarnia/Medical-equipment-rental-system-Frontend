@@ -1,4 +1,6 @@
 "use client"
+import { GrFormPrevious } from "react-icons/gr"; 
+import { MdNavigateNext } from "react-icons/md"; 
 import { AiOutlineSearch } from "react-icons/ai"; 
 import useAllAds from "@/hooks/useAllAds";
 import AdminListAds from "@/components/admin/AdminListAds";
@@ -38,7 +40,8 @@ const Page = () => {
         setSearchParams({
             "phoneNumber": searchParam.get("phoneNumber"),
             "published": published,
-            "isDeleted": isDeleted
+            "isDeleted": isDeleted,
+            "page": searchParam.get("page")
         })
     }, [searchParam])
 
@@ -49,6 +52,35 @@ const Page = () => {
                 <p dir="rtl" className="bg-red-600 py-2 text-white px-3 rounded-lg font-[Yekan-Bold]">برای دسترسی به این صفحه ابتدا باید وارد حساب کاربری خود شوید.</p>
             </div>
         )
+    }
+
+    let hasPreviousPage: boolean;
+    let hasNextPage: boolean;
+
+    if (searchParam.get("page")) {
+        if (searchParam.get("page") === "1") {
+            hasPreviousPage = false;
+        } else {
+            hasPreviousPage = true;
+        }
+    } else {
+        hasPreviousPage = false;
+    }
+
+    if ((Number(searchParam.get("page")) ? Number(searchParam.get("page")) : 1 ) * 10 <= itemsCount) {
+        hasNextPage = true;
+    } else {
+        hasNextPage = false;
+    }
+
+    const previousHandler = () => {
+        const url = `/admin/?page=${searchParam.get("page") ? Number(searchParam.get("page")) - 1 : "1"}${searchParam.get("phoneNumber") ? `&phoneNumber=${searchParam.get("phoneNumber")}` : ""}${searchParam.get("published") ? `&published=${searchParam.get("published")}` : ""}${searchParam.get("isDeleted") ? `&isDeleted=${searchParam.get("isDeleted")}` : ""}`;
+        return router.replace(url);
+    }
+
+    const nextHandler = () => {
+        const url = `/admin/?page=${searchParam.get("page") ? Number(searchParam.get("page")) + 1 : "2"}${searchParam.get("phoneNumber") ? `&phoneNumber=${searchParam.get("phoneNumber")}` : ""}${searchParam.get("published") ? `&published=${searchParam.get("published")}` : ""}${searchParam.get("isDeleted") ? `&isDeleted=${searchParam.get("isDeleted")}` : ""}`;
+        return router.replace(url);
     }
 
     return (
@@ -95,6 +127,18 @@ const Page = () => {
                 </form>
             </div>
             {searchMenuStatus && <div className="fixed left-0 top-0 z-30 bg-black h-full w-full opacity-65"></div>}
+
+            {/* Pagination */}
+            <div className="flex items-center justify-center gap-12 mt-8">
+                {hasPreviousPage && <button onClick={previousHandler} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
+                    <GrFormPrevious size={25} />
+                    <p className="font-[Yekan-Medium]">صفحه قبل</p>
+                </button>}
+                {hasNextPage && <button onClick={nextHandler} className="shadow-md shadow-black bg-violet-400 rounded-lg py-1 px-3 flex items-center cursor-pointer hover:scale-125 transition duration-300">
+                    <p className="font-[Yekan-Medium]">صفحه بعد</p>
+                    <MdNavigateNext size={28} />
+                </button>}
+            </div>
         </Fragment>
     )
 };
