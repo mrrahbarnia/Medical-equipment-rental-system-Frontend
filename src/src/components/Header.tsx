@@ -95,7 +95,7 @@ export const Header = () => {
         </div>
 
         <Link href="/" className="flex items-center space-x-4 cursor-pointer">
-            <p className="font-[Yekan-Bold] text-3xl">جاره</p>
+            <p className="font-[Yekan-Bold] text-3xl">رنتشو</p>
             <FaBriefcaseMedical size={30} />
         </Link>
     </nav>

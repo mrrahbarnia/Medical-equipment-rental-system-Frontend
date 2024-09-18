@@ -43,19 +43,19 @@ const Page = () => {
 
     const isSubmitDisabled = email.length === 0 || name.length === 0 || message.length === 0
     return (
-        <div className="pt-44 w-full min-[475px]:w-4/5 min-[640px]:w-3/5 min-[900px]:w-2/5 px-2 m-auto h-screen">
+        <div className="pt-44 w-full min-[475px]:w-4/5 min-[640px]:w-3/5 min-[900px]:w-2/5 px-2 m-auto min-h-screen">
             <form className="w-full py-16 px-6 rounded-lg flex flex-col gap-6 shadow-lg bg-gradient-to-b from-white to-gray-200" onSubmit={formSubmitHandler}>
                 <h1 className="font-[Yekan-Bold] text-lg mx-auto">فرم ارسال نظر</h1>
                 <div className="flex flex-col gap-2 items-end">
                     <label className="font-[Yekan-Medium]">ایمیل</label>
                     <input type="email" name="email" placeholder="example@gmail.com" className="rounded-md border-2 outline-1 py-2 px-3 w-full" onChange={(event) => setEmail(event.target.value)} value={email}/>
                 </div>
-                <div className="flex flex-col gap-2 items-end">
-                    <label className="font-[Yekan-Medium]">نام</label>
+                <div className="flex flex-col gap-2 items-end font-[Yekan-Medium]">
+                    <label>نام</label>
                     <input dir="rtl" type="text" name="userName" className="rounded-md border-2 outline-1 py-2 px-3 w-full" onChange={(event) => setName(event.target.value)} value={name}/>
                 </div>
-                <div className="flex flex-col gap-2 items-end">
-                    <label className="font-[Yekan-Medium]">پیام</label>
+                <div className="flex flex-col gap-2 items-end font-[Yekan-Medium]">
+                    <label>پیام</label>
                     <textarea dir="rtl" name="message" rows={5} className="resize-none rounded-md outline-1 py-2 px-3 w-full" onChange={(event) => setMessage(event.target.value)} value={message}/>
                 </div>
                 <div className="flex flex-col mx-auto gap-3">

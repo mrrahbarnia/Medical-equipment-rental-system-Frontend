@@ -2,6 +2,7 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
+import L from "leaflet";
 
 export interface responseData {
     id: string
@@ -9,6 +10,7 @@ export interface responseData {
     description: string,
     video?: string | null,
     place: string,
+    latLon?: L.LatLngExpression | null,
     hourPrice?: string | null,
     dayPrice?: string | null,
     weekPrice?: string | null,

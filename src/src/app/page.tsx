@@ -17,12 +17,12 @@ export default function Page() {
 
   return (
     <div className="min-h-screen">
-      <Image src={"/images/banner.jpeg"} alt="banner-image" width={500} height={500} className="w-full object-contain" />
+      <Image priority src={"/images/banner.jpeg"} alt="banner-image" width={500} height={500} className="w-full object-contain" />
 
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-12">
 
         {/* Recent Ads */}
-        {recentAdsIsPending ? <p className="pt-12 rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p> : <div className="flex flex-col items-end gap-3 pt-12 pr-3">
+        {recentAdsIsPending ? <p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p> : <div className="flex flex-col items-end gap-6 pt-12 pr-3">
           <h2 className="font-[Yekan-Bold]">جدیدترین آگهی ها</h2>
           <div dir="rtl" className="font-[Yekan-Medium] flex gap-3 overflow-x-auto no-scroll whitespace-nowrap w-full">
             {recentAdsData?.map(ad => {
@@ -40,7 +40,7 @@ export default function Page() {
         </div>}
 
         {/* MostViewedAds */}
-        {mostViewedIsPending ? <p className="pt-12 rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p> : <div className="flex flex-col items-end gap-3 pt-12 pr-3">
+        {mostViewedIsPending ? <p className="rounded-full border-8 w-10 h-10 border-slate-600 border-solid border-t-transparent animate-spin m-auto"></p> : <div className="flex flex-col items-end gap-6 pt-12 pr-3">
           <h2 className="font-[Yekan-Bold]">پربازدیدترین آگهی ها</h2>
           <div dir="rtl" className="font-[Yekan-Medium] flex gap-3 overflow-x-auto no-scroll whitespace-nowrap w-full">
             {mostViewedData?.map(ad => {

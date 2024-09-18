@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import { errorHandler } from "@/utils/messageUtils";
 import { useAuth } from "@/contexts/authProvider";
 import { useRouter } from "next/navigation";
+import MapComponent from "@/components/map/Map";
 
 const INTERNAL_UPDATE_MY_ADVERTISEMENT_API: string = "/apis/my-advertisement/update/"
 
@@ -32,9 +33,10 @@ const Page = ({params}: {params: {id: string}}) => {
     const [categoriesResponse, setCategoriesResponse] = useState<string[]>([]);
     const [fullRangeDays, setFullRangeDays] = useState<Date []>([]);
     const [selectedFormattedDays, setSelectedFormattedDays] = useState<string[]>([]);
-    const {data, isError, isPending} = useGetMyAdDetail(params.id);
+    const {data, error, isPending} = useGetMyAdDetail(params.id);
     const auth = useAuth();
     const router = useRouter();
+    const [selectedLocation, setSelectedLocation] = useState<L.LatLngExpression | null>(null); 
 
     useEffect(() => {
         if (data) {
@@ -90,6 +92,19 @@ const Page = ({params}: {params: {id: string}}) => {
         selectedFormattedDays.length > 1 ? formData.append("days", selectedFormattedDays) : formData.append("days", data?.days) ;
         formData.append("previousImages", JSON.stringify(previousImages))
         formData.append("previousVideo", JSON.stringify(previousVideo))
+        if (selectedLocation) {
+            // @ts-ignore
+            const lat = selectedLocation.lat
+            // @ts-ignore
+            const lng = selectedLocation.lng
+            formData.append("latLon", JSON.stringify([lat,lng]))
+        }
+        const formEvent = event.target as HTMLFormElement
+        if (formEvent.place.value === "" && !selectedLocation) {
+            errorHandler("آدرس یا باید بصورت دستی وارد شود یا برای دقت بیشتر روی نقشه انتخاب شود.", setFormError)
+            setIsLoading(false);
+            return;
+        }
         axios.put(
             `${INTERNAL_UPDATE_MY_ADVERTISEMENT_API}${params.id}`, formData
         )
@@ -100,6 +115,8 @@ const Page = ({params}: {params: {id: string}}) => {
             }
         )
         .catch((error) => {
+            console.log(error);
+            
             if (error.status === 401) {
                 errorHandler("برای ثبت آگهی ابتدا باید وارد حساب کاربری خود شوید.", setFormError);
                 setIsLoading(false);
@@ -201,7 +218,6 @@ const Page = ({params}: {params: {id: string}}) => {
     const deletePreviousImage = (imageUrl: string) => {
         setPreviousImages((lastState) => lastState.filter((url) => url !== imageUrl))
     }
-    
 
     if (isPending) {
         return <div className="h-screen flex items-center justify-center">
@@ -209,9 +225,16 @@ const Page = ({params}: {params: {id: string}}) => {
             </div>
     }
 
-    if (isError) {
+    if (error?.response?.data?.detail === "Could not validate credentials") {
+        auth.logout();
         return <div className="h-screen flex items-center justify-center">
-                <p className="bg-red-600 py-2 text-white px-3 rounded-lg font-[Yekan-Bold]">مسیر اشتباه</p>
+                <p className="bg-red-600 py-2 text-white px-3 rounded-lg font-[Yekan-Bold]">برای دسترسی به این صفحه ابتدا باید وارد حساب کاربری خود شوید.</p>
+            </div>
+    }
+
+    if (error) {
+        return <div className="h-screen flex items-center justify-center">
+                <p className="bg-red-600 py-2 text-white px-3 rounded-lg font-[Yekan-Bold]">مسیر اشتباه.</p>
             </div>
     }
 
@@ -226,7 +249,18 @@ const Page = ({params}: {params: {id: string}}) => {
                 </div>
                 <div className="flex flex-col gap-2 items-end">
                     <label className="font-[Yekan-Medium]">آدرس</label>
-                    <input dir="rtl" defaultValue={data?.place} type="text" name="place" required className="font-[Yekan-Medium] rounded-md border-2 outline-1 py-2 px-3 w-full"/>
+                    <input dir="rtl" defaultValue={data?.place} type="text" name="place" className="font-[Yekan-Medium] rounded-md border-2 outline-1 py-2 px-3 w-full"/>
+                    <p dir="rtl" className="font-[Yekan-Medium] text-gray-500 text-xs">آدرس را یا بصورت دستی ویرایش کنید یا روی نقشه آدرس جدید را انتخاب کنید.</p>
+                    <div className="flex items-center bg-yellow-400 rounded-md py-1 px-2 gap-1">
+                        <p dir="rtl" className="font-[Yekan-Medium] text-xs">برای ثبت دقیق آدرس بهتر است از نقشه استفاده کنید.</p>
+                        <AiFillWarning size={25} />
+                    </div>
+                    <MapComponent 
+                        selectedLocation={selectedLocation}
+                        setSelectedLocation={setSelectedLocation}
+                        className="w-full h-96"
+                        clickable={true} 
+                    />
                 </div>
                 <div className="flex flex-col gap-2 items-end">
                     <label className="font-[Yekan-Medium]">دسته بندی</label>

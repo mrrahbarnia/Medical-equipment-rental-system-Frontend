@@ -22,7 +22,7 @@ const AdItem = ({ad}: {key: string, ad: AdvertisementInterface}) => {
             <hr />
             <div className="flex flex-col items-end gap-2">
                 <span className="text-white font-[Yekan-Medium] text-sm text-right bg-green-600 w-fit py-1 px-2 rounded-md">دسته بندی:{ad.categoryName}</span>
-                <span className="font-[Yekan-Medium] text-sm">آدرس:{ad.place}</span>
+                <span className="font-[Yekan-Medium] text-sm text-right">آدرس:{ad.place}</span>
             </div>
         </Link>
     )

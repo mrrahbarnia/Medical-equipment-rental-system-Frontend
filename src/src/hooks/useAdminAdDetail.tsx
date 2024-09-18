@@ -1,6 +1,7 @@
 "use client"
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import L from "leaflet";
 
 const INTERNAL_DETAIL_AD_API: string = "/apis/admin/"
 
@@ -10,6 +11,7 @@ export interface responseData {
     description: string,
     video?: string | null,
     place: string,
+    latLon?: L.LatLngExpression | null,
     adminComment?: string | null,
     hourPrice?: string | null,
     dayPrice?: string | null,

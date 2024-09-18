@@ -19,7 +19,7 @@ export const Footer = () => {
                 </div>
 
                 <div className="flex items-center space-x-2">
-                    <span className="font-[Yekan-Bold] text-xl">جاره</span>
+                    <span className="font-[Yekan-Bold] text-xl">رنتشو</span>
                     <FaBriefcaseMedical size={25} />
                 </div>
             </nav>

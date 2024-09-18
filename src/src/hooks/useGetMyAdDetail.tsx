@@ -19,8 +19,16 @@ interface responseData {
     categoryName: string
 }
 
+interface error {
+    response?: {
+        data?: {
+            detail?: string
+        }
+    }
+}
+
 const useGetMyAdDetail = (id: string) => {
-    const {data, isPending, isError} = useQuery({
+    const {data, isPending, error} = useQuery<responseData, error>({
         queryKey: ["My-Ad", id],
         refetchOnWindowFocus: false,
         queryFn: async() => {
@@ -29,7 +37,7 @@ const useGetMyAdDetail = (id: string) => {
         }
     })
 
-    return {data, isPending, isError}
+    return {data, isPending, error}
 }
 
 export default useGetMyAdDetail;

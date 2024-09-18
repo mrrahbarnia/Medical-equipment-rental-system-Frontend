@@ -20,6 +20,6 @@ export const GET = async (request: NextRequest) => {
     if (response.ok) {
         return NextResponse.json(await response.json(), {status: 200})
     } else {
-        return NextResponse.json({"fetched": false}, {status: response.status})
+        return NextResponse.json(await response.json(), {status: response.status})
     }
 }

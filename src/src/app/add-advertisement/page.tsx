@@ -2,6 +2,7 @@
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { MdOutlineDangerous } from "react-icons/md";
 import axios from "axios";
+import L from "leaflet";
 import { errorHandler } from "@/utils/messageUtils";
 import { AiFillWarning } from "react-icons/ai";
 import { useState, ChangeEvent, useEffect, FormEvent } from "react";
@@ -12,7 +13,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { useRouter } from "next/navigation";
 import dayjs from 'dayjs';
-
+import MapComponent from "@/components/map/Map";
 
 
 const INTERNAL_ADD_ADVERTISEMENT_API: string = "/apis/add-advertisement/"
@@ -32,6 +33,8 @@ const Page = () => {
     const [formError, setFormError] = useState<string>("");
     const [fullRangeDays, setFullRangeDays] = useState<Date []>([]);
     const router = useRouter();
+    const [selectedLocation, setSelectedLocation] = useState<L.LatLngExpression | null>(null);
+    
 
     const getFullDateRange = (start: Date, end: Date) => {
         const dates: Date[] = [];
@@ -70,12 +73,25 @@ const Page = () => {
     }, [fullRangeDays])
 
     const formSubmitHandler = (event: FormEvent<HTMLFormElement>) => {
-        setIsLoading(true);
         event.preventDefault();
+        setIsLoading(true);
         // @ts-ignore
         const formData = new FormData(event.target);
         // @ts-ignore
         formData.append("days", selectedFormattedDays)
+        if (selectedLocation) {
+            // @ts-ignore
+            const lat = selectedLocation.lat;
+            // @ts-ignore
+            const lng = selectedLocation.lng;
+            formData.append("latLon", JSON.stringify([lat,lng]))
+        }
+        const formEvent = event.target as HTMLFormElement
+        if (formEvent.place.value === "" && !selectedLocation) {
+            errorHandler("آدرس یا باید بصورت دستی وارد شود یا برای دقت بیشتر روی نقشه انتخاب شود.", setFormError)
+            setIsLoading(false);
+            return;
+        }
         axios.post(INTERNAL_ADD_ADVERTISEMENT_API, formData)
         .then(
             () => {
@@ -84,6 +100,8 @@ const Page = () => {
             }
         )
         .catch((error) => {
+            console.log(error);
+
             if (error.status === 401) {
                 errorHandler("برای ثبت آگهی ابتدا باید وارد حساب کاربری خود شوید.", setFormError);
                 setIsLoading(false);
@@ -201,10 +219,20 @@ const Page = () => {
                     <label className="font-[Yekan-Medium]">عنوان آگهی</label>
                     <input dir="rtl" type="text" name="title" required className="font-[Yekan-Medium] rounded-md border-2 outline-1 py-2 px-3 w-full"/>
                 </div>
-                <div className="flex flex-col gap-2 items-end">
+                <div className="flex flex-col gap-2 items-end w-full">
                     <label className="font-[Yekan-Medium]">آدرس</label>
-                    <input dir="rtl" type="text" name="place" required className="font-[Yekan-Medium] rounded-md border-2 outline-1 py-2 px-3 w-full"/>
-                    
+                    <input dir="rtl" type="text" name="place" className="font-[Yekan-Medium] rounded-md border-2 outline-1 py-2 px-3 w-full"/>
+                    <p dir="rtl" className="font-[Yekan-Medium] text-gray-500 text-xs">آدرس را یا بصورت دستی یا روی نقشه باید انتخاب کنید.</p>
+                    <div className="flex items-center bg-yellow-400 rounded-md py-1 px-2 gap-1">
+                        <p dir="rtl" className="font-[Yekan-Medium] text-xs">برای ثبت دقیق آدرس بهتر است از نقشه استفاده کنید.</p>
+                        <AiFillWarning size={25} />
+                    </div>
+                    <MapComponent 
+                        selectedLocation={selectedLocation}
+                        setSelectedLocation={setSelectedLocation}
+                        className="w-full h-96"
+                        clickable={true} 
+                    />
                 </div>
                 <div className="flex flex-col gap-2 items-end">
                     <label className="font-[Yekan-Medium]">دسته بندی</label>

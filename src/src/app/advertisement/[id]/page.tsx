@@ -21,6 +21,7 @@ import persian_fa from "react-date-object/locales/persian_fa"
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules'
 import { useAuth } from "@/contexts/authProvider";
+import MapComponent from "@/components/map/Map";
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
@@ -114,6 +115,7 @@ const Page = ({params}: {params: {id: string}}) => {
                                     <span className="text-xs md:text-sm font-[Yekan-Medium]">{data?.place}</span>
                                     <ImLocation size={18} />
                                 </div>
+                                {data?.latLon && <MapComponent className="w-96 h-96 z-0" clickable={false} selectedLocation={data?.latLon} />}
                                 <div className="flex w-full flex-col items-end gap-1 bg-gradient-to-r from-violet-300 to-violet-100 py-2 px-3 rounded-md">
                                     <div className="flex items-center justify-end gap-1">
                                         <span className="text-sm font-[Yekan-Medium]">قیمت ها</span>

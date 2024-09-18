@@ -26,6 +26,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import useAdminAdDetail from "@/hooks/useAdminAdDetail";
+import MapComponent from "@/components/map/Map";
 
 
 const Page = ({params}: {params: {id: string}}) => {
@@ -130,6 +131,7 @@ const Page = ({params}: {params: {id: string}}) => {
                                     <span className="text-xs md:text-sm font-[Yekan-Medium]">{data?.place}</span>
                                     <ImLocation size={18} />
                                 </div>
+                                {data?.latLon && <MapComponent className="w-96 h-96 z-0" clickable={false} selectedLocation={data?.latLon} />}
                                 <div className="flex w-full flex-col items-end gap-1 bg-gradient-to-r from-violet-300 to-violet-100 py-2 px-3 rounded-md">
                                     <div className="flex items-center justify-end gap-1">
                                         <span className="text-sm font-[Yekan-Medium]">قیمت ها</span>

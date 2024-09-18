@@ -23,11 +23,15 @@ export const PUT = async (request: NextRequest) => {
                 }
             });
         }
+        // @ts-ignore
+        const latLon = formData.get("latLon") ? (formData.get("latLon"))?.slice(1,-1).split(",") : undefined;
+
         const days = formData.get("days");
         const payload = {
             "title": formData.get("title"),
             "categoryName": formData.get("categoryName"),
             "place": formData.get("place"),
+            "latLon": latLon,
             // @ts-ignore
             "previousImages": ((formData.get("previousImages"))?.slice(1, -1))?.split(","),
             // @ts-ignore
@@ -61,6 +65,7 @@ export const PUT = async (request: NextRequest) => {
 
         return NextResponse.json({ status: 204 });
     } catch (e) {
+        console.log(e);
         return NextResponse.json(e.response.data, { status: e.response?.status || 500 });
     }
 };
