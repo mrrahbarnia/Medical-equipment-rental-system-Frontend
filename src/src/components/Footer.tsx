@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { FaBriefcaseMedical } from "react-icons/fa";
 import { Fragment } from "react";
+import Image from "next/image";
 
 export const Footer = () => {
     return (
@@ -14,14 +15,13 @@ export const Footer = () => {
                         <Link href="/ticket/">تماس با ما</Link>
                     </div>
                     <div className="hover:text-gray-600 cursor-pointer font-[Yekan-Medium] text-xs hover:scale-105 transition">
-                        <Link href="#">قوانین جاره</Link>
+                        <Link href="#">قوانین رنتشو</Link>
                     </div>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                    <span className="font-[Yekan-Bold] text-xl">رنتشو</span>
-                    <FaBriefcaseMedical size={25} />
-                </div>
+                <Link href="/" className="flex items-center space-x-2">
+                <Image src="/images/Logo.png" alt="Logo image" width={1920} height={1200} className="w-12 h-12 object-contain bg-transparent" />
+                </Link>
             </nav>
         </Fragment>
     )

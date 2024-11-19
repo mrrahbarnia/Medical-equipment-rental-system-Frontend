@@ -64,8 +64,8 @@ export const PUT = async (request: NextRequest) => {
         });
 
         return NextResponse.json({ status: 204 });
-    } catch (e) {
-        console.log(e);
-        return NextResponse.json(e.response.data, { status: e.response?.status || 500 });
+    } catch (e: any) {
+        const errorResponse = e.response?.data || { message: "An unknown error occurred" };
+        return NextResponse.json(errorResponse, { status: e.response?.status || 500 });
     }
 };

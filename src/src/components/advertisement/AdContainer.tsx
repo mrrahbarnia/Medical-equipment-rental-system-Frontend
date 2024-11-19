@@ -9,8 +9,7 @@ import { searchedAds } from "@/hooks/usePublishedAds";
 import { EXTERNAL_BASE_ENDPOINTS } from "@/configs/default";
 import AdList from "./AdList";
 import { errorHandler } from "@/utils/messageUtils";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import React, { ChangeEvent, FormEvent, Fragment, useState, useEffect } from "react";
 
 const AdContainer = () => {

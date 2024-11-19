@@ -17,7 +17,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen">
-      <Image priority src={"/images/banner.jpeg"} alt="banner-image" width={500} height={500} className="w-full object-contain" />
+      <Image priority src={"/images/desktop-banner.jpg"} alt="banner-image" width={1920} height={1200} className="w-full object-contain pt-20" />
 
       <div className="flex flex-col gap-12">
 
